@@ -7,6 +7,7 @@ const { scrape } = require('./scraper');
 const { format } = require('./formatter');
 const path = require('path');
 const { renderToImage, saveImage } = require('./image-renderer');
+const { MessageMedia } = require('whatsapp-web.js');
 
 const FLAGS = {
   dryRun: process.argv.includes('--dry-run'),
@@ -141,7 +142,6 @@ async function main() {
   }
 
   const groupId = requireEnv('WHATSAPP_GROUP_ID');
-  const { MessageMedia } = require('whatsapp-web.js');
   const { start, sendToGroup, shutdown } = require('./whatsapp');
   const media = new MessageMedia('image/png', buffer.toString('base64'));
   const client = await start();

@@ -74,7 +74,7 @@ async function renderToImage(text) {
       ctx.fillStyle = COLORS.text;
     }
 
-    ctx.fillText(d.text, PADDING, y + 18);
+    ctx.fillText(d.text, PADDING, y + 18, WIDTH - PADDING * 2);
     y += LINE_H;
   }
 
