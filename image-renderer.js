@@ -1,6 +1,4 @@
 const { createCanvas } = require('canvas');
-const fs = require('fs');
-const path = require('path');
 
 const WIDTH = 720;
 const PADDING = 32;
@@ -78,7 +76,7 @@ async function renderToImage(text) {
     y += LINE_H;
   }
 
-  return canvas.toBuffer('image/png');
+  return canvas.toBuffer('image/png', { compressionLevel: 0 });
 }
 
 module.exports = { parseLine, renderToImage };
