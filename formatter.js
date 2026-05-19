@@ -36,7 +36,7 @@ function formatClassificationTable(slice, targetIndex, displayLabel) {
     const record = `${row.wins}V ${row.draws}E ${row.losses}D`;
     const core = `${row.position}º ${club} — ${row.points} ${ptsLabel} (${record})`;
     if (isTarget) {
-      lines.push(`▶ *${core}* ◀`);
+      lines.push(`*${core}*`);
     } else {
       lines.push(core);
     }
