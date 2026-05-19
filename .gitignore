@@ -1,0 +1,17 @@
+node_modules/
+auth/
+data/
+debug/
+.env
+*.log
+.DS_Store
+
+# whatsapp-web.js cache
+.wwebjs_cache/
+.wwebjs_auth/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
