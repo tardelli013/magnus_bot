@@ -44,14 +44,17 @@ function formatClassificationTable(slice, targetIndex, displayLabel) {
   return lines.join('\n');
 }
 
+const MAX_PLAYER_NAME = 28;
+
 function formatTeamScorers(teamScorers, teamLabel) {
   if (!teamScorers || teamScorers.length === 0) {
     return `⚽ *ARTILHEIROS — ${teamLabel}*\n_⚠️ Sem artilheiros do time no momento._`;
   }
   const lines = [`⚽ *ARTILHEIROS — ${teamLabel}*`];
   teamScorers.forEach((s, i) => {
+    const name = truncate(s.name, MAX_PLAYER_NAME);
     const golLabel = s.goals === 1 ? 'gol' : 'gols';
-    lines.push(`${i + 1}. ${s.name} — ${s.goals} ${golLabel}`);
+    lines.push(`${i + 1}. ${name} — ${s.goals} ${golLabel}`);
   });
   return lines.join('\n');
 }
@@ -62,9 +65,10 @@ function formatTopScorers(topScorers) {
   }
   const lines = ['🔥 *TOP 5 ARTILHEIROS GERAIS*'];
   topScorers.forEach((s) => {
+    const name = truncate(s.name, MAX_PLAYER_NAME);
     const club = truncate(shortClub(s.club), 28);
     const golLabel = s.goals === 1 ? 'gol' : 'gols';
-    lines.push(`${s.position}. ${s.name}`);
+    lines.push(`${s.position}. ${name}`);
     lines.push(`   _${s.goals} ${golLabel} · ${club}_`);
   });
   return lines.join('\n');
