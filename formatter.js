@@ -28,22 +28,19 @@ function formatDate(iso) {
 
 function formatClassificationTable(slice, targetIndex, displayLabel) {
   const lines = [];
-  lines.push('```');
-  lines.push('Pos  Clube                   Pts  J  V  E  D');
   slice.forEach((row, i) => {
     const isTarget = i === targetIndex;
-    const marker = isTarget ? '▶' : ' ';
-    const pos = pad(String(row.position) + 'º', 4);
     const clubName = isTarget && displayLabel ? displayLabel : shortClub(row.club);
-    const club = pad(truncate(clubName, 22), 22);
-    const pts = pad(row.points, 3, 'right');
-    const j = pad(row.games, 2, 'right');
-    const v = pad(row.wins, 2, 'right');
-    const e = pad(row.draws, 2, 'right');
-    const d = pad(row.losses, 2, 'right');
-    lines.push(`${pos}${marker} ${club}  ${pts} ${j} ${v} ${e} ${d}`);
+    const club = truncate(clubName, 20);
+    const ptsLabel = row.points === 1 ? 'pt' : 'pts';
+    const record = `${row.wins}V ${row.draws}E ${row.losses}D`;
+    const core = `${row.position}º ${club} — ${row.points} ${ptsLabel} (${record})`;
+    if (isTarget) {
+      lines.push(`▶ *${core}* ◀`);
+    } else {
+      lines.push(core);
+    }
   });
-  lines.push('```');
   return lines.join('\n');
 }
 
@@ -65,9 +62,10 @@ function formatTopScorers(topScorers) {
   }
   const lines = ['🔥 *TOP 5 ARTILHEIROS GERAIS*'];
   topScorers.forEach((s) => {
-    const club = truncate(shortClub(s.club), 22);
+    const club = truncate(shortClub(s.club), 28);
     const golLabel = s.goals === 1 ? 'gol' : 'gols';
-    lines.push(`${s.position}. ${s.name} (${club}) — ${s.goals} ${golLabel}`);
+    lines.push(`${s.position}. ${s.name}`);
+    lines.push(`   _${s.goals} ${golLabel} · ${club}_`);
   });
   return lines.join('\n');
 }
