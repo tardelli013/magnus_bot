@@ -32,7 +32,6 @@ function formatClassificationTable(slice, targetIndex, displayLabel) {
   lines.push('Pos  Clube                   Pts  J  V  E  D');
   slice.forEach((row, i) => {
     const isTarget = i === targetIndex;
-    const marker = isTarget ? '▶' : ' ';
     const pos = pad(String(row.position) + 'º', 4);
     const clubName = isTarget && displayLabel ? displayLabel : shortClub(row.club);
     const club = pad(truncate(clubName, 22), 22);
@@ -41,7 +40,7 @@ function formatClassificationTable(slice, targetIndex, displayLabel) {
     const v = pad(row.wins, 2, 'right');
     const e = pad(row.draws, 2, 'right');
     const d = pad(row.losses, 2, 'right');
-    lines.push(`${pos}${marker} ${club}  ${pts} ${j} ${v} ${e} ${d}`);
+    lines.push(`${pos}  ${club}  ${pts} ${j} ${v} ${e} ${d}`);
   });
   lines.push('```');
   return lines.join('\n');
