@@ -1,4 +1,6 @@
 const { createCanvas } = require('canvas');
+const fs = require('fs');
+const path = require('path');
 
 const WIDTH = 720;
 const PADDING = 32;
@@ -79,4 +81,13 @@ async function renderToImage(text) {
   return canvas.toBuffer('image/png', { compressionLevel: 0 });
 }
 
-module.exports = { parseLine, renderToImage };
+async function saveImage(buffer, dir) {
+  fs.mkdirSync(dir, { recursive: true });
+  const date = new Date().toISOString().slice(0, 10);
+  const filename = `classificacao-${date}.png`;
+  const filepath = path.join(dir, filename);
+  fs.writeFileSync(filepath, buffer);
+  return filepath;
+}
+
+module.exports = { parseLine, renderToImage, saveImage };
