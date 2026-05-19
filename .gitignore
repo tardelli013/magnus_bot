@@ -5,6 +5,7 @@ debug/
 .env
 *.log
 .DS_Store
+generated-images/
 
 # whatsapp-web.js cache
 .wwebjs_cache/
