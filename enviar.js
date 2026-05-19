@@ -5,6 +5,8 @@ const logger = require('./src/logger');
 const cache = require('./src/cache');
 const { scrape } = require('./scraper');
 const { format } = require('./formatter');
+const path = require('path');
+const { renderToImage, saveImage } = require('./image-renderer');
 
 const FLAGS = {
   dryRun: process.argv.includes('--dry-run'),
@@ -127,19 +129,24 @@ async function main() {
 
   const { payload, stale } = await obtainPayload();
   const message = format(payload, { targetTeam, displayName, stale });
+  const buffer = await renderToImage(message);
+  const imagePath = await saveImage(buffer, path.join(__dirname, 'generated-images'));
+  logger.info(`imagem salva: ${imagePath}`);
 
   if (FLAGS.dryRun) {
-    console.log('\n=== DRY RUN — mensagem que SERIA enviada ===\n');
+    console.log('\n=== DRY RUN — mensagem que SERIA enviada (como imagem) ===\n');
     console.log(message);
-    console.log('\n=== fim ===');
+    console.log(`\n=== imagem salva em ${imagePath} ===`);
     return;
   }
 
   const groupId = requireEnv('WHATSAPP_GROUP_ID');
+  const { MessageMedia } = require('whatsapp-web.js');
   const { start, sendToGroup, shutdown } = require('./whatsapp');
+  const media = new MessageMedia('image/png', buffer.toString('base64'));
   const client = await start();
   try {
-    await sendToGroup(client, groupId, message);
+    await sendToGroup(client, groupId, null, media);
   } finally {
     await shutdown(client);
   }
