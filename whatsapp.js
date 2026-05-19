@@ -79,9 +79,9 @@ async function listGroups(client) {
   return groups.map((g) => ({ id: g.id._serialized, name: g.name, participants: g.participants?.length || 0 }));
 }
 
-async function sendToGroup(client, groupId, message) {
+async function sendToGroup(client, groupId, message, media = null) {
   if (!groupId) throw new Error('sendToGroup: groupId obrigatório');
-  if (!message || !message.trim()) throw new Error('sendToGroup: mensagem vazia');
+  if (!media && (!message || !message.trim())) throw new Error('sendToGroup: mensagem vazia');
 
   let chat;
   try {
@@ -97,7 +97,7 @@ async function sendToGroup(client, groupId, message) {
   }
 
   logger.info(`→ enviando para grupo "${chat.name}" (${groupId})`);
-  await chat.sendMessage(message);
+  await chat.sendMessage(media || message);
   logger.info('mensagem enviada ✓');
 }
 
