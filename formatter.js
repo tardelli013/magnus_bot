@@ -78,7 +78,7 @@ function formatTeamLabel(targetTeam) {
 function format(payload, opts = {}) {
   const { targetTeam = 'TIME ALVO', displayName, stale = false } = opts;
   const teamLabel = (displayName || formatTeamLabel(targetTeam)).toUpperCase();
-  const { source, classification, targetIndex, teamScorers, topScorers, scrapedAt, warnings = [] } = payload;
+  const { source, classification, targetIndex, topClassification, teamScorers, topScorers, scrapedAt, warnings = [] } = payload;
 
   const parts = [];
 
@@ -97,6 +97,15 @@ function format(payload, opts = {}) {
 
   parts.push('');
   parts.push(formatTeamScorers(teamScorers, teamLabel));
+
+  parts.push('');
+  parts.push('📊 *TOP 5 CLASSIFICAÇÃO GERAL*');
+  if (topClassification && topClassification.length) {
+    parts.push(formatClassificationTable(topClassification, -1, null));
+  } else {
+    parts.push('_⚠️ Classificação geral indisponível._');
+  }
+
   parts.push('');
   parts.push(formatTopScorers(topScorers));
 

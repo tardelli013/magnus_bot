@@ -111,6 +111,7 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
     },
     classification: window.slice,
     targetIndex: window.targetIndex,
+    topClassification: fullClassification.slice(0, 5),
     teamScorers,
     topScorers,
     warnings,
