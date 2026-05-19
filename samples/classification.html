@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151897136-4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-151897136-4');
+    </script>
+
+    <!-- Required meta tags -->
+    <meta name="csrf-token" content="P9O26qPkNfDpKqGBvXaJK5dguT2iBY0zNWkH5xKV">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="icon" href="https://eventos.admfutsal.com.br/images/favicon.png">
+
+
+
+    <!-- Bootstrap CSS -->
+    <link href="https://eventos.admfutsal.com.br/css/app.css" rel="stylesheet">
+    <style>.fallback-image-patrocinador {
+        height: 140px;
+        width: 100%;
+        display: block;
+        position: relative;
+        color: transparent;
+        background: transparent;
+      }
+
+      .fallback-image-patrocinador:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-image: url('/images/patrocinador.jpg');
+      }
+
+      .fallback-patrocinador-clube {
+        height: 90px;
+        width: 100%;
+        display: block;
+        position: relative;
+        color: transparent;
+        background: transparent;
+      }
+
+      .fallback-patrocinador-clube:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-image: url('/images/patrocinador.jpg');
+      }</style>
+
+
+    <title>Federação Paulista de Futsal - Súmula Online</title>
+    <meta name="Description" content="Veja a classificação, jogos, equipes, cartões e artilheiros de todos os campeonatos da Federação Paulista de Futsal!">
+    <meta name="Keywords" content="Súmula Online, Federação Paulista de Futsal, Futsal, FPFS, AdminFutsal">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="https://eventos.admfutsal.com.br/images/img_logo_federacao.png" alt="Logo da Federação" class="logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                
+                    
+                
+                
+                    
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<section class="mt-3 mb-3">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card p-1">
+                    <a href="https://www.kagiva.com.br/" target="_blank"><img src="http://admfutsal.com.br/assets/images/patrocinadores/patrocinador_1.jpg?time=1779197767.7375" alt="Patrocinador" class="img-fluid fallback-image-patrocinador"></a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-1">
+                    <a href="https://www.kagiva.com.br/" target="_blank"><img src="http://admfutsal.com.br/assets/images/patrocinadores/patrocinador_2.jpg?time=1779197767.7376" alt="Patrocinador" class="img-fluid fallback-image-patrocinador"></a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-1">
+                    <a href="https://www.kagiva.com.br/" target="_blank"><img src="http://admfutsal.com.br/assets/images/patrocinadores/patrocinador_3.jpg?time=1779197767.7376" alt="Patrocinador" class="img-fluid fallback-image-patrocinador"></a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-1">
+                    <a href="https://www.kagiva.com.br/" target="_blank"><img src="http://admfutsal.com.br/assets/images/patrocinadores/patrocinador_4.jpg?time=1779197767.7376" alt="Patrocinador" class="img-fluid fallback-image-patrocinador"></a>
+                </div>
+            </div>
+        </div>
+        <form>
+            <div class="form-row align-items-end mt-3 mb-3">
+                <div class="col">
+                    <label>Temporada</label>
+                    <select class="form-control col-sm-12" id="select_temporada" disabled>
+                        <option selected>Selecione uma temporada</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Título</label>
+                    <select class="form-control" id="select_titulo" disabled>
+                        <option selected>Selecionar</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Divisão</label>
+                    <select class="form-control" id="select_divisao" disabled>
+                        <option selected>Selecionar Divisão</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Categoria</label>
+                    <select class="form-control" id="select_categoria" disabled>
+                        <option selected>Selecionar Categoria</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <a id="botao_buscar" class="btn btn-dark btn-block disabled" href="#">Buscar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section><!-- end sponsors -->
+
+<main class="main_wrapper">
+    <div class="container-fluid">
+
+        <div class="row pb-2">
+    <div class="col-8">
+        <h5>Campeonato Paulista, Temporada 2026 <br/>
+            Categoria Sub-7, Divisao A1</h5>
+    </div>
+    <div class="col-4 text-right" style="text-align:right;">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary text-light favorites_modal" id="btn_meus_favoritos"  data-toggle="modal" data-target="#modal_favoritos">Meus Favoritos</button>
+            <button class="btn btn-outline-secondary" id="btn_adicionar_aos_favoritos" data-idevento="908">Adicionar aos Favoritos</button>
+        </div>
+    </div>
+</div>        <div class="row">
+
+    <div class="col-md-12">
+        <ul class="nav nav-tabs nav-justified mb-3 navegacao_evento">
+          	<li class="nav-item">
+                <a class="nav-link " href="/evento/classificacao-copa-uniao-unica/908">
+                	Copa União (Única)
+            	</a>
+            </li>
+          	<li class="nav-item">
+                <a class="nav-link " href="/evento/classificacao-copa-uniao-a3/908">
+                  	Copa União (A3)
+              	</a>
+            </li>
+            
+            <li class="nav-item">
+                <a class="nav-link active" href="/evento/908">Classificação</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="/evento/908/jogos">Jogos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="/evento/908/equipes">Equipes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="/evento/908/artilharia">Artilharia</a>
+            </li>
+            
+                
+            
+        </ul><!-- end nav tabs -->
+    </div>
+
+</div>
+
+        
+    <div class="row justify-content-center">
+        <div class="col-md-6 justify-content-center">
+
+            <ul class="nav nav-pills justify-content-center classification_menu" id="pills-tab" role="tablist">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" value="" id="classificacao_por_chave">
+                    <label for="classificacao_por_chave" class="form-check-label">Por Chave</label>
+                </div>
+                                    <li class="nav-item">
+                        <a class="nav-link normal active"
+                           id="pills-fase-35853-tab"
+                           data-fase="35853"
+                           data-toggle="pill"
+                           href="#pills-fase-35853"
+                           role="tab" aria-controls="pills-fase1"
+                           aria-selected="true">FASE CLASSIFICATORIA</a>
+                    </li>
+                                            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-content" id="pills-tabContent">
+                                    <div class="tab-pane fade show active"
+                         id="pills-fase-35853" role="tabpanel"
+                         aria-labelledby="pills-fase-35853-tab">
+
+                        <table class="table table-hover table-responsive-sm classification_table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Chave</th>
+                                <th scope="col">Posição</th>
+                                <th scope="col" width="300px">Clube</th>
+                                <th scope="col">Pontos</th>
+                                <th scope="col">Qtde. Jogos</th>
+                                <th scope="col">Vitórias</th>
+                                <th scope="col">Empates</th>
+                                <th scope="col">Derrotas</th>
+                                <th scope="col">Gols Pro</th>
+                                <th scope="col">Gols Contra</th>
+                                <th scope="col">Gols Saldo</th>
+                                <th scope="col">Average</th>
+                                <th scope="col">Média Gols Marcados</th>
+                                <th scope="col">Média Gols Sofridos</th>
+                                <th scope="col">Índice Técnico</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>1º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12271.png" alt="SÃO PAULO FC - A"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SÃO PAULO FC - A</div>
+                                        </div>
+                                    </td>
+                                                                            <td>24</td>
+                                                                        <td>8</td>
+                                    <td>8</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>65</td>
+                                    <td>5</td>
+                                    <td>60</td>
+                                    <td>13</td>
+                                    <td>8.13</td>
+                                    <td>0.63</td>
+                                    <td>3</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>2º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12253.png" alt="SE PALMEIRAS"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SE PALMEIRAS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>21</td>
+                                                                        <td>7</td>
+                                    <td>7</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>59</td>
+                                    <td>6</td>
+                                    <td>53</td>
+                                    <td>9.83</td>
+                                    <td>8.43</td>
+                                    <td>0.86</td>
+                                    <td>3</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>3º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12261.png" alt="S.C. CORINTHIANS PAULISTA PTA."
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">S.C. CORINTHIANS PAULISTA PTA.</div>
+                                        </div>
+                                    </td>
+                                                                            <td>21</td>
+                                                                        <td>7</td>
+                                    <td>7</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>36</td>
+                                    <td>5</td>
+                                    <td>31</td>
+                                    <td>7.2</td>
+                                    <td>5.14</td>
+                                    <td>0.71</td>
+                                    <td>3</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>4º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12348.png" alt="ASSOCIAÇÃO DESPORTIVA DO ABCD - MESC SÃO BERNARDO"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO DESPORTIVA DO ABCD - MESC SÃO BERNARDO</div>
+                                        </div>
+                                    </td>
+                                                                            <td>21</td>
+                                                                        <td>8</td>
+                                    <td>7</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>28</td>
+                                    <td>12</td>
+                                    <td>16</td>
+                                    <td>2.33</td>
+                                    <td>3.5</td>
+                                    <td>1.5</td>
+                                    <td>2.63</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>5º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12295.png" alt="C.A. JUVENTUS"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">C.A. JUVENTUS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>8</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>45</td>
+                                    <td>10</td>
+                                    <td>35</td>
+                                    <td>4.5</td>
+                                    <td>5.63</td>
+                                    <td>1.25</td>
+                                    <td>2.25</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>6º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12303.png" alt="LIGA SANCAETANENSE DE F.S."
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">LIGA SANCAETANENSE DE F.S.</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>8</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>35</td>
+                                    <td>12</td>
+                                    <td>23</td>
+                                    <td>2.92</td>
+                                    <td>4.38</td>
+                                    <td>1.5</td>
+                                    <td>2.25</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>7º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12858.png" alt="SANTOS FC"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SANTOS FC</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>7</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>27</td>
+                                    <td>16</td>
+                                    <td>11</td>
+                                    <td>1.69</td>
+                                    <td>3.86</td>
+                                    <td>2.29</td>
+                                    <td>2.57</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>8º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12321.png" alt="A.D. BATEBOLA"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">A.D. BATEBOLA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>8</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>24</td>
+                                    <td>18</td>
+                                    <td>6</td>
+                                    <td>1.33</td>
+                                    <td>3</td>
+                                    <td>2.25</td>
+                                    <td>2.25</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>9º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12325.png" alt="CAMISA 10 F.C. A"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">CAMISA 10 F.C. A</div>
+                                        </div>
+                                    </td>
+                                                                            <td>16</td>
+                                                                        <td>8</td>
+                                    <td>5</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>30</td>
+                                    <td>19</td>
+                                    <td>11</td>
+                                    <td>1.58</td>
+                                    <td>3.75</td>
+                                    <td>2.38</td>
+                                    <td>2</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>10º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12223.png" alt="PULO FUTSAL CAMPINAS"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">PULO FUTSAL CAMPINAS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>15</td>
+                                                                        <td>8</td>
+                                    <td>5</td>
+                                    <td>0</td>
+                                    <td>3</td>
+                                    <td>28</td>
+                                    <td>17</td>
+                                    <td>11</td>
+                                    <td>1.65</td>
+                                    <td>3.5</td>
+                                    <td>2.13</td>
+                                    <td>1.88</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>11º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12233.png" alt="UNIÃO RD"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">UNIÃO RD</div>
+                                        </div>
+                                    </td>
+                                                                            <td>13</td>
+                                                                        <td>8</td>
+                                    <td>4</td>
+                                    <td>1</td>
+                                    <td>3</td>
+                                    <td>25</td>
+                                    <td>26</td>
+                                    <td>-1</td>
+                                    <td>0.96</td>
+                                    <td>3.13</td>
+                                    <td>3.25</td>
+                                    <td>1.63</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>12º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12287.png" alt="SÃO CAETANO FC - RSFC"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SÃO CAETANO FC - RSFC</div>
+                                        </div>
+                                    </td>
+                                                                            <td>12</td>
+                                                                        <td>8</td>
+                                    <td>4</td>
+                                    <td>0</td>
+                                    <td>4</td>
+                                    <td>14</td>
+                                    <td>23</td>
+                                    <td>-9</td>
+                                    <td>0.61</td>
+                                    <td>1.75</td>
+                                    <td>2.88</td>
+                                    <td>1.5</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>13º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12186.png" alt="LAUSANNE PAULISTA FC - A"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">LAUSANNE PAULISTA FC - A</div>
+                                        </div>
+                                    </td>
+                                                                            <td>11</td>
+                                                                        <td>8</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>20</td>
+                                    <td>17</td>
+                                    <td>3</td>
+                                    <td>1.18</td>
+                                    <td>2.5</td>
+                                    <td>2.13</td>
+                                    <td>1.38</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>14º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12364.png" alt="CLUBE ATLÉTICO YPIRANGA | C.A. YPIRANGA"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">CLUBE ATLÉTICO YPIRANGA | C.A. YPIRANGA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>9</td>
+                                                                        <td>8</td>
+                                    <td>3</td>
+                                    <td>0</td>
+                                    <td>5</td>
+                                    <td>15</td>
+                                    <td>27</td>
+                                    <td>-12</td>
+                                    <td>0.56</td>
+                                    <td>1.88</td>
+                                    <td>3.38</td>
+                                    <td>1.13</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>15º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12390.png" alt="ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO</div>
+                                        </div>
+                                    </td>
+                                                                            <td>8</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>4</td>
+                                    <td>19</td>
+                                    <td>30</td>
+                                    <td>-11</td>
+                                    <td>0.63</td>
+                                    <td>2.38</td>
+                                    <td>3.75</td>
+                                    <td>1</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>16º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12373.png" alt="TAUBATÉ UMBRO FUTSAL"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">TAUBATÉ UMBRO FUTSAL</div>
+                                        </div>
+                                    </td>
+                                                                            <td>7</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>5</td>
+                                    <td>15</td>
+                                    <td>19</td>
+                                    <td>-4</td>
+                                    <td>0.79</td>
+                                    <td>1.88</td>
+                                    <td>2.38</td>
+                                    <td>0.88</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>17º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12360.png" alt="ASSOCIAÇÃO ESPORTIVA CENTRO DE TREINAMENTO BOLA NO PÉ"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO ESPORTIVA CENTRO DE TREINAMENTO BOLA NO PÉ</div>
+                                        </div>
+                                    </td>
+                                                                            <td>6</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>6</td>
+                                    <td>12</td>
+                                    <td>26</td>
+                                    <td>-14</td>
+                                    <td>0.46</td>
+                                    <td>1.5</td>
+                                    <td>3.25</td>
+                                    <td>0.75</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>18º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12215.png" alt="C.A. TABUCA JRS"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">C.A. TABUCA JRS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>6</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>6</td>
+                                    <td>18</td>
+                                    <td>37</td>
+                                    <td>-19</td>
+                                    <td>0.49</td>
+                                    <td>2.25</td>
+                                    <td>4.63</td>
+                                    <td>0.75</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>19º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12313.png" alt="FAE/OSASCO/AUDAX"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">FAE/OSASCO/AUDAX</div>
+                                        </div>
+                                    </td>
+                                                                            <td>4</td>
+                                                                        <td>8</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>6</td>
+                                    <td>19</td>
+                                    <td>47</td>
+                                    <td>-28</td>
+                                    <td>0.4</td>
+                                    <td>2.38</td>
+                                    <td>5.88</td>
+                                    <td>0.5</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>20º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12333.png" alt="ASSOCIAÇÃO PORTUGUESA DE DESPORTOS"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO PORTUGUESA DE DESPORTOS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>3</td>
+                                                                        <td>7</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>6</td>
+                                    <td>12</td>
+                                    <td>43</td>
+                                    <td>-31</td>
+                                    <td>0.28</td>
+                                    <td>1.71</td>
+                                    <td>6.14</td>
+                                    <td>0.43</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>21º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12167.png" alt="A.D. INDAIATUBA"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">A.D. INDAIATUBA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>3</td>
+                                                                        <td>8</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>10</td>
+                                    <td>43</td>
+                                    <td>-33</td>
+                                    <td>0.23</td>
+                                    <td>1.25</td>
+                                    <td>5.38</td>
+                                    <td>0.38</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>22º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12386.png" alt="OLE BRASIL SOCIETY QUADRA ESPORTIVA LTDA ME - OLE BRASIL SOCIETY"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">OLE BRASIL SOCIETY QUADRA ESPORTIVA LTDA ME - OLE BRASIL SOCIETY</div>
+                                        </div>
+                                    </td>
+                                                                            <td>3</td>
+                                                                        <td>8</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>13</td>
+                                    <td>48</td>
+                                    <td>-35</td>
+                                    <td>0.27</td>
+                                    <td>1.63</td>
+                                    <td>6</td>
+                                    <td>0.38</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>23º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12352.png" alt="ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU</div>
+                                        </div>
+                                    </td>
+                                                                            <td>1</td>
+                                                                        <td>8</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                    <td>11</td>
+                                    <td>29</td>
+                                    <td>-18</td>
+                                    <td>0.38</td>
+                                    <td>1.38</td>
+                                    <td>3.63</td>
+                                    <td>0.13</td>
+                                </tr>
+                                                            <tr>
+                                    <td>GRUPO UNICO</td>
+                                    <td>24º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12337.png" alt="PROSPERE / HORTOLANDIA"
+                                                     class="table_image escudo"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">PROSPERE / HORTOLANDIA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>1</td>
+                                                                        <td>8</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                    <td>5</td>
+                                    <td>50</td>
+                                    <td>-45</td>
+                                    <td>0.1</td>
+                                    <td>0.63</td>
+                                    <td>6.25</td>
+                                    <td>0.13</td>
+                                </tr>
+                                                        </tbody>
+                        </table>
+                    </div>
+                                                    <div class="tab-pane fade"
+                         id="pills-fase-35853-chave" role="tabpanel"
+                         aria-labelledby="pills-fase-35853-chave-tab">
+
+                        <table class="table table-responsive-sm classification_table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Chave</th>
+                                <th scope="col">Posição</th>
+                                <th scope="col" width="300px">Clube</th>
+                                <th scope="col">Pontos</th>
+                                <th scope="col">Qtde. Jogos</th>
+                                <th scope="col">Vitórias</th>
+                                <th scope="col">Empates</th>
+                                <th scope="col">Derrotas</th>
+                                <th scope="col">Gols Pro</th>
+                                <th scope="col">Gols Contra</th>
+                                <th scope="col">Gols Saldo</th>
+                                <th scope="col">Average</th>
+                                <th scope="col">Média Gols Marcados</th>
+                                <th scope="col">Média Gols Sofridos</th>
+                                <th scope="col">Índice Técnico</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                                                                                                            <tr class="">
+                                    <td>GRUPO UNICO</td>
+                                    <td>1º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12271.png" alt="SÃO PAULO FC - A"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SÃO PAULO FC - A</div>
+                                        </div>
+                                    </td>
+                                                                            <td>24</td>
+                                                                        <td>8</td>
+                                    <td>8</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>65</td>
+                                    <td>5</td>
+                                    <td>60</td>
+                                    <td>13</td>
+                                    <td>8.13</td>
+                                    <td>0.63</td>
+                                    <td>3</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>2º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12253.png" alt="SE PALMEIRAS"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SE PALMEIRAS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>21</td>
+                                                                        <td>7</td>
+                                    <td>7</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>59</td>
+                                    <td>6</td>
+                                    <td>53</td>
+                                    <td>9.83</td>
+                                    <td>8.43</td>
+                                    <td>0.86</td>
+                                    <td>3</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>3º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12261.png" alt="S.C. CORINTHIANS PAULISTA PTA."
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">S.C. CORINTHIANS PAULISTA PTA.</div>
+                                        </div>
+                                    </td>
+                                                                            <td>21</td>
+                                                                        <td>7</td>
+                                    <td>7</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>36</td>
+                                    <td>5</td>
+                                    <td>31</td>
+                                    <td>7.2</td>
+                                    <td>5.14</td>
+                                    <td>0.71</td>
+                                    <td>3</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>4º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12348.png" alt="ASSOCIAÇÃO DESPORTIVA DO ABCD - MESC SÃO BERNARDO"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO DESPORTIVA DO ABCD - MESC SÃO BERNARDO</div>
+                                        </div>
+                                    </td>
+                                                                            <td>21</td>
+                                                                        <td>8</td>
+                                    <td>7</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>28</td>
+                                    <td>12</td>
+                                    <td>16</td>
+                                    <td>2.33</td>
+                                    <td>3.5</td>
+                                    <td>1.5</td>
+                                    <td>2.63</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>5º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12295.png" alt="C.A. JUVENTUS"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">C.A. JUVENTUS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>8</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>45</td>
+                                    <td>10</td>
+                                    <td>35</td>
+                                    <td>4.5</td>
+                                    <td>5.63</td>
+                                    <td>1.25</td>
+                                    <td>2.25</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>6º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12303.png" alt="LIGA SANCAETANENSE DE F.S."
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">LIGA SANCAETANENSE DE F.S.</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>8</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>35</td>
+                                    <td>12</td>
+                                    <td>23</td>
+                                    <td>2.92</td>
+                                    <td>4.38</td>
+                                    <td>1.5</td>
+                                    <td>2.25</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>7º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12858.png" alt="SANTOS FC"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SANTOS FC</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>7</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>27</td>
+                                    <td>16</td>
+                                    <td>11</td>
+                                    <td>1.69</td>
+                                    <td>3.86</td>
+                                    <td>2.29</td>
+                                    <td>2.57</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>8º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12321.png" alt="A.D. BATEBOLA"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">A.D. BATEBOLA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>18</td>
+                                                                        <td>8</td>
+                                    <td>6</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>24</td>
+                                    <td>18</td>
+                                    <td>6</td>
+                                    <td>1.33</td>
+                                    <td>3</td>
+                                    <td>2.25</td>
+                                    <td>2.25</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>9º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12325.png" alt="CAMISA 10 F.C. A"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">CAMISA 10 F.C. A</div>
+                                        </div>
+                                    </td>
+                                                                            <td>16</td>
+                                                                        <td>8</td>
+                                    <td>5</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>30</td>
+                                    <td>19</td>
+                                    <td>11</td>
+                                    <td>1.58</td>
+                                    <td>3.75</td>
+                                    <td>2.38</td>
+                                    <td>2</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>10º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12223.png" alt="PULO FUTSAL CAMPINAS"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">PULO FUTSAL CAMPINAS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>15</td>
+                                                                        <td>8</td>
+                                    <td>5</td>
+                                    <td>0</td>
+                                    <td>3</td>
+                                    <td>28</td>
+                                    <td>17</td>
+                                    <td>11</td>
+                                    <td>1.65</td>
+                                    <td>3.5</td>
+                                    <td>2.13</td>
+                                    <td>1.88</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>11º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12233.png" alt="UNIÃO RD"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">UNIÃO RD</div>
+                                        </div>
+                                    </td>
+                                                                            <td>13</td>
+                                                                        <td>8</td>
+                                    <td>4</td>
+                                    <td>1</td>
+                                    <td>3</td>
+                                    <td>25</td>
+                                    <td>26</td>
+                                    <td>-1</td>
+                                    <td>0.96</td>
+                                    <td>3.13</td>
+                                    <td>3.25</td>
+                                    <td>1.63</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>12º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12287.png" alt="SÃO CAETANO FC - RSFC"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">SÃO CAETANO FC - RSFC</div>
+                                        </div>
+                                    </td>
+                                                                            <td>12</td>
+                                                                        <td>8</td>
+                                    <td>4</td>
+                                    <td>0</td>
+                                    <td>4</td>
+                                    <td>14</td>
+                                    <td>23</td>
+                                    <td>-9</td>
+                                    <td>0.61</td>
+                                    <td>1.75</td>
+                                    <td>2.88</td>
+                                    <td>1.5</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>13º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12186.png" alt="LAUSANNE PAULISTA FC - A"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">LAUSANNE PAULISTA FC - A</div>
+                                        </div>
+                                    </td>
+                                                                            <td>11</td>
+                                                                        <td>8</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>20</td>
+                                    <td>17</td>
+                                    <td>3</td>
+                                    <td>1.18</td>
+                                    <td>2.5</td>
+                                    <td>2.13</td>
+                                    <td>1.38</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>14º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12364.png" alt="CLUBE ATLÉTICO YPIRANGA | C.A. YPIRANGA"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">CLUBE ATLÉTICO YPIRANGA | C.A. YPIRANGA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>9</td>
+                                                                        <td>8</td>
+                                    <td>3</td>
+                                    <td>0</td>
+                                    <td>5</td>
+                                    <td>15</td>
+                                    <td>27</td>
+                                    <td>-12</td>
+                                    <td>0.56</td>
+                                    <td>1.88</td>
+                                    <td>3.38</td>
+                                    <td>1.13</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>15º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12390.png" alt="ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO</div>
+                                        </div>
+                                    </td>
+                                                                            <td>8</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>4</td>
+                                    <td>19</td>
+                                    <td>30</td>
+                                    <td>-11</td>
+                                    <td>0.63</td>
+                                    <td>2.38</td>
+                                    <td>3.75</td>
+                                    <td>1</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>16º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12373.png" alt="TAUBATÉ UMBRO FUTSAL"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">TAUBATÉ UMBRO FUTSAL</div>
+                                        </div>
+                                    </td>
+                                                                            <td>7</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>5</td>
+                                    <td>15</td>
+                                    <td>19</td>
+                                    <td>-4</td>
+                                    <td>0.79</td>
+                                    <td>1.88</td>
+                                    <td>2.38</td>
+                                    <td>0.88</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>17º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12360.png" alt="ASSOCIAÇÃO ESPORTIVA CENTRO DE TREINAMENTO BOLA NO PÉ"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO ESPORTIVA CENTRO DE TREINAMENTO BOLA NO PÉ</div>
+                                        </div>
+                                    </td>
+                                                                            <td>6</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>6</td>
+                                    <td>12</td>
+                                    <td>26</td>
+                                    <td>-14</td>
+                                    <td>0.46</td>
+                                    <td>1.5</td>
+                                    <td>3.25</td>
+                                    <td>0.75</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>18º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12215.png" alt="C.A. TABUCA JRS"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">C.A. TABUCA JRS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>6</td>
+                                                                        <td>8</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>6</td>
+                                    <td>18</td>
+                                    <td>37</td>
+                                    <td>-19</td>
+                                    <td>0.49</td>
+                                    <td>2.25</td>
+                                    <td>4.63</td>
+                                    <td>0.75</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>19º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12313.png" alt="FAE/OSASCO/AUDAX"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">FAE/OSASCO/AUDAX</div>
+                                        </div>
+                                    </td>
+                                                                            <td>4</td>
+                                                                        <td>8</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>6</td>
+                                    <td>19</td>
+                                    <td>47</td>
+                                    <td>-28</td>
+                                    <td>0.4</td>
+                                    <td>2.38</td>
+                                    <td>5.88</td>
+                                    <td>0.5</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>20º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12333.png" alt="ASSOCIAÇÃO PORTUGUESA DE DESPORTOS"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO PORTUGUESA DE DESPORTOS</div>
+                                        </div>
+                                    </td>
+                                                                            <td>3</td>
+                                                                        <td>7</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>6</td>
+                                    <td>12</td>
+                                    <td>43</td>
+                                    <td>-31</td>
+                                    <td>0.28</td>
+                                    <td>1.71</td>
+                                    <td>6.14</td>
+                                    <td>0.43</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>21º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12167.png" alt="A.D. INDAIATUBA"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">A.D. INDAIATUBA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>3</td>
+                                                                        <td>8</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>10</td>
+                                    <td>43</td>
+                                    <td>-33</td>
+                                    <td>0.23</td>
+                                    <td>1.25</td>
+                                    <td>5.38</td>
+                                    <td>0.38</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>22º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12386.png" alt="OLE BRASIL SOCIETY QUADRA ESPORTIVA LTDA ME - OLE BRASIL SOCIETY"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">OLE BRASIL SOCIETY QUADRA ESPORTIVA LTDA ME - OLE BRASIL SOCIETY</div>
+                                        </div>
+                                    </td>
+                                                                            <td>3</td>
+                                                                        <td>8</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                    <td>13</td>
+                                    <td>48</td>
+                                    <td>-35</td>
+                                    <td>0.27</td>
+                                    <td>1.63</td>
+                                    <td>6</td>
+                                    <td>0.38</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>23º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12352.png" alt="ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU</div>
+                                        </div>
+                                    </td>
+                                                                            <td>1</td>
+                                                                        <td>8</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                    <td>11</td>
+                                    <td>29</td>
+                                    <td>-18</td>
+                                    <td>0.38</td>
+                                    <td>1.38</td>
+                                    <td>3.63</td>
+                                    <td>0.13</td>
+                                </tr>
+                                                                                                                                <tr class="">
+                                    <td></td>
+                                    <td>24º</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="offset-1 col-3">
+                                                <img src="http://admfutsal.com.br/assets/images/foto/escudo/12337.png" alt="PROSPERE / HORTOLANDIA"
+                                                     class="table_image escudo ml-auto mr-auto"></div>
+                                            <div class="col-8 d-flex align-items-center justify-content-start text-left">PROSPERE / HORTOLANDIA</div>
+                                        </div>
+                                    </td>
+                                                                            <td>1</td>
+                                                                        <td>8</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                    <td>5</td>
+                                    <td>50</td>
+                                    <td>-45</td>
+                                    <td>0.1</td>
+                                    <td>0.63</td>
+                                    <td>6.25</td>
+                                    <td>0.13</td>
+                                </tr>
+                                                                                        </tbody>
+                        </table>
+                    </div>
+                                <div class="tab-pane fade"
+                     id="pills-fase-total" role="tabpanel"
+                     aria-labelledby="pills-fase-total-tab">
+
+                    <table class="table table-hover table-responsive-sm classification_table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Chave</th>
+                            <th scope="col">Posição</th>
+                            <th scope="col" width="300px">Clube</th>
+                            <th scope="col">Pontos</th>
+                            <th scope="col">Qtde. Jogos</th>
+                            <th scope="col">Vitórias</th>
+                            <th scope="col">Empates</th>
+                            <th scope="col">Derrotas</th>
+                            <th scope="col">Gols Pro</th>
+                            <th scope="col">Gols Contra</th>
+                            <th scope="col">Gols Saldo</th>
+                            <th scope="col">Average</th>
+                            <th scope="col">Média Gols Marcados</th>
+                            <th scope="col">Média Gols Sofridos</th>
+                            <th scope="col">Índice Técnico</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>1º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12271.png" alt="SÃO PAULO FC - A"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">SÃO PAULO FC - A</div>
+                                    </div>
+                                </td>
+                                                                  <td>24</td>
+                                                                <td>8</td>
+                                <td>8</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>65</td>
+                                <td>5</td>
+                                <td>60</td>
+                                <td>13</td>
+                                <td>8.13</td>
+                                <td>0.63</td>
+                                <td>3</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>2º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12253.png" alt="SE PALMEIRAS"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">SE PALMEIRAS</div>
+                                    </div>
+                                </td>
+                                                                  <td>21</td>
+                                                                <td>7</td>
+                                <td>7</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>59</td>
+                                <td>6</td>
+                                <td>53</td>
+                                <td>9.83</td>
+                                <td>8.43</td>
+                                <td>0.86</td>
+                                <td>3</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>3º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12261.png" alt="S.C. CORINTHIANS PAULISTA PTA."
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">S.C. CORINTHIANS PAULISTA PTA.</div>
+                                    </div>
+                                </td>
+                                                                  <td>21</td>
+                                                                <td>7</td>
+                                <td>7</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>36</td>
+                                <td>5</td>
+                                <td>31</td>
+                                <td>7.2</td>
+                                <td>5.14</td>
+                                <td>0.71</td>
+                                <td>3</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>4º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12348.png" alt="ASSOCIAÇÃO DESPORTIVA DO ABCD - MESC SÃO BERNARDO"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO DESPORTIVA DO ABCD - MESC SÃO BERNARDO</div>
+                                    </div>
+                                </td>
+                                                                  <td>21</td>
+                                                                <td>8</td>
+                                <td>7</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>28</td>
+                                <td>12</td>
+                                <td>16</td>
+                                <td>2.33</td>
+                                <td>3.5</td>
+                                <td>1.5</td>
+                                <td>2.63</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>5º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12295.png" alt="C.A. JUVENTUS"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">C.A. JUVENTUS</div>
+                                    </div>
+                                </td>
+                                                                  <td>18</td>
+                                                                <td>8</td>
+                                <td>6</td>
+                                <td>0</td>
+                                <td>2</td>
+                                <td>45</td>
+                                <td>10</td>
+                                <td>35</td>
+                                <td>4.5</td>
+                                <td>5.63</td>
+                                <td>1.25</td>
+                                <td>2.25</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>6º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12303.png" alt="LIGA SANCAETANENSE DE F.S."
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">LIGA SANCAETANENSE DE F.S.</div>
+                                    </div>
+                                </td>
+                                                                  <td>18</td>
+                                                                <td>8</td>
+                                <td>6</td>
+                                <td>0</td>
+                                <td>2</td>
+                                <td>35</td>
+                                <td>12</td>
+                                <td>23</td>
+                                <td>2.92</td>
+                                <td>4.38</td>
+                                <td>1.5</td>
+                                <td>2.25</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>7º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12858.png" alt="SANTOS FC"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">SANTOS FC</div>
+                                    </div>
+                                </td>
+                                                                  <td>18</td>
+                                                                <td>7</td>
+                                <td>6</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>27</td>
+                                <td>16</td>
+                                <td>11</td>
+                                <td>1.69</td>
+                                <td>3.86</td>
+                                <td>2.29</td>
+                                <td>2.57</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>8º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12321.png" alt="A.D. BATEBOLA"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">A.D. BATEBOLA</div>
+                                    </div>
+                                </td>
+                                                                  <td>18</td>
+                                                                <td>8</td>
+                                <td>6</td>
+                                <td>0</td>
+                                <td>2</td>
+                                <td>24</td>
+                                <td>18</td>
+                                <td>6</td>
+                                <td>1.33</td>
+                                <td>3</td>
+                                <td>2.25</td>
+                                <td>2.25</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>9º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12325.png" alt="CAMISA 10 F.C. A"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">CAMISA 10 F.C. A</div>
+                                    </div>
+                                </td>
+                                                                  <td>16</td>
+                                                                <td>8</td>
+                                <td>5</td>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>30</td>
+                                <td>19</td>
+                                <td>11</td>
+                                <td>1.58</td>
+                                <td>3.75</td>
+                                <td>2.38</td>
+                                <td>2</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>10º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12223.png" alt="PULO FUTSAL CAMPINAS"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">PULO FUTSAL CAMPINAS</div>
+                                    </div>
+                                </td>
+                                                                  <td>15</td>
+                                                                <td>8</td>
+                                <td>5</td>
+                                <td>0</td>
+                                <td>3</td>
+                                <td>28</td>
+                                <td>17</td>
+                                <td>11</td>
+                                <td>1.65</td>
+                                <td>3.5</td>
+                                <td>2.13</td>
+                                <td>1.88</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>11º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12233.png" alt="UNIÃO RD"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">UNIÃO RD</div>
+                                    </div>
+                                </td>
+                                                                  <td>13</td>
+                                                                <td>8</td>
+                                <td>4</td>
+                                <td>1</td>
+                                <td>3</td>
+                                <td>25</td>
+                                <td>26</td>
+                                <td>-1</td>
+                                <td>0.96</td>
+                                <td>3.13</td>
+                                <td>3.25</td>
+                                <td>1.63</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>12º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12287.png" alt="SÃO CAETANO FC - RSFC"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">SÃO CAETANO FC - RSFC</div>
+                                    </div>
+                                </td>
+                                                                  <td>12</td>
+                                                                <td>8</td>
+                                <td>4</td>
+                                <td>0</td>
+                                <td>4</td>
+                                <td>14</td>
+                                <td>23</td>
+                                <td>-9</td>
+                                <td>0.61</td>
+                                <td>1.75</td>
+                                <td>2.88</td>
+                                <td>1.5</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>13º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12186.png" alt="LAUSANNE PAULISTA FC - A"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">LAUSANNE PAULISTA FC - A</div>
+                                    </div>
+                                </td>
+                                                                  <td>11</td>
+                                                                <td>8</td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>20</td>
+                                <td>17</td>
+                                <td>3</td>
+                                <td>1.18</td>
+                                <td>2.5</td>
+                                <td>2.13</td>
+                                <td>1.38</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>14º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12364.png" alt="CLUBE ATLÉTICO YPIRANGA | C.A. YPIRANGA"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">CLUBE ATLÉTICO YPIRANGA | C.A. YPIRANGA</div>
+                                    </div>
+                                </td>
+                                                                  <td>9</td>
+                                                                <td>8</td>
+                                <td>3</td>
+                                <td>0</td>
+                                <td>5</td>
+                                <td>15</td>
+                                <td>27</td>
+                                <td>-12</td>
+                                <td>0.56</td>
+                                <td>1.88</td>
+                                <td>3.38</td>
+                                <td>1.13</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>15º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12390.png" alt="ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO</div>
+                                    </div>
+                                </td>
+                                                                  <td>8</td>
+                                                                <td>8</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>4</td>
+                                <td>19</td>
+                                <td>30</td>
+                                <td>-11</td>
+                                <td>0.63</td>
+                                <td>2.38</td>
+                                <td>3.75</td>
+                                <td>1</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>16º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12373.png" alt="TAUBATÉ UMBRO FUTSAL"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">TAUBATÉ UMBRO FUTSAL</div>
+                                    </div>
+                                </td>
+                                                                  <td>7</td>
+                                                                <td>8</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>5</td>
+                                <td>15</td>
+                                <td>19</td>
+                                <td>-4</td>
+                                <td>0.79</td>
+                                <td>1.88</td>
+                                <td>2.38</td>
+                                <td>0.88</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>17º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12360.png" alt="ASSOCIAÇÃO ESPORTIVA CENTRO DE TREINAMENTO BOLA NO PÉ"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO ESPORTIVA CENTRO DE TREINAMENTO BOLA NO PÉ</div>
+                                    </div>
+                                </td>
+                                                                  <td>6</td>
+                                                                <td>8</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>6</td>
+                                <td>12</td>
+                                <td>26</td>
+                                <td>-14</td>
+                                <td>0.46</td>
+                                <td>1.5</td>
+                                <td>3.25</td>
+                                <td>0.75</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>18º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12215.png" alt="C.A. TABUCA JRS"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">C.A. TABUCA JRS</div>
+                                    </div>
+                                </td>
+                                                                  <td>6</td>
+                                                                <td>8</td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td>6</td>
+                                <td>18</td>
+                                <td>37</td>
+                                <td>-19</td>
+                                <td>0.49</td>
+                                <td>2.25</td>
+                                <td>4.63</td>
+                                <td>0.75</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>19º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12313.png" alt="FAE/OSASCO/AUDAX"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">FAE/OSASCO/AUDAX</div>
+                                    </div>
+                                </td>
+                                                                  <td>4</td>
+                                                                <td>8</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>6</td>
+                                <td>19</td>
+                                <td>47</td>
+                                <td>-28</td>
+                                <td>0.4</td>
+                                <td>2.38</td>
+                                <td>5.88</td>
+                                <td>0.5</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>20º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12333.png" alt="ASSOCIAÇÃO PORTUGUESA DE DESPORTOS"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO PORTUGUESA DE DESPORTOS</div>
+                                    </div>
+                                </td>
+                                                                  <td>3</td>
+                                                                <td>7</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>6</td>
+                                <td>12</td>
+                                <td>43</td>
+                                <td>-31</td>
+                                <td>0.28</td>
+                                <td>1.71</td>
+                                <td>6.14</td>
+                                <td>0.43</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>21º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12167.png" alt="A.D. INDAIATUBA"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">A.D. INDAIATUBA</div>
+                                    </div>
+                                </td>
+                                                                  <td>3</td>
+                                                                <td>8</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>7</td>
+                                <td>10</td>
+                                <td>43</td>
+                                <td>-33</td>
+                                <td>0.23</td>
+                                <td>1.25</td>
+                                <td>5.38</td>
+                                <td>0.38</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>22º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12386.png" alt="OLE BRASIL SOCIETY QUADRA ESPORTIVA LTDA ME - OLE BRASIL SOCIETY"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">OLE BRASIL SOCIETY QUADRA ESPORTIVA LTDA ME - OLE BRASIL SOCIETY</div>
+                                    </div>
+                                </td>
+                                                                  <td>3</td>
+                                                                <td>8</td>
+                                <td>1</td>
+                                <td>0</td>
+                                <td>7</td>
+                                <td>13</td>
+                                <td>48</td>
+                                <td>-35</td>
+                                <td>0.27</td>
+                                <td>1.63</td>
+                                <td>6</td>
+                                <td>0.38</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>23º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12352.png" alt="ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU</div>
+                                    </div>
+                                </td>
+                                                                  <td>1</td>
+                                                                <td>8</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>7</td>
+                                <td>11</td>
+                                <td>29</td>
+                                <td>-18</td>
+                                <td>0.38</td>
+                                <td>1.38</td>
+                                <td>3.63</td>
+                                <td>0.13</td>
+                            </tr>
+                                                    <tr>
+                                <td>GRUPO UNICO</td>
+                                <td>24º</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="offset-1 col-3 d-flex align-items-center justify-content-end">
+                                            <img src="http://admfutsal.com.br/assets/images/foto/escudo/12337.png" alt="PROSPERE / HORTOLANDIA"
+                                                 class="table_image escudo"></div>
+                                        <div class="col-8 d-flex align-items-center justify-content-start text-left">PROSPERE / HORTOLANDIA</div>
+                                    </div>
+                                </td>
+                                                                  <td>1</td>
+                                                                <td>8</td>
+                                <td>0</td>
+                                <td>1</td>
+                                <td>7</td>
+                                <td>5</td>
+                                <td>50</td>
+                                <td>-45</td>
+                                <td>0.1</td>
+                                <td>0.63</td>
+                                <td>6.25</td>
+                                <td>0.13</td>
+                            </tr>
+                                                </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+</main>
+
+<footer class="bg-secondary main_footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <p class="pt-3 text-light">Copyright 2026 - Federação Paulista de Futebol de Salão</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Modal -->
+<div class="modal lg fade" id="modal_favoritos" tabindex="-1" role="dialog" aria-labelledby="modal_favoritosTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title" id="exampleModalLongTitle">Meus Favoritos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="tabela_favoritos" class="d-none flex-column">
+                    <h3 class="text-center">Eventos Favoritos</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <td scope="col">Campeonato</td>
+                            <td scope="col" style="width: 135px;">Ações</td>
+                        </tr>
+                        </thead>
+                        <tbody id="conteudo_tabela_favoritos">
+                        <tr>
+                            <td>Campeonato Metropolitano - Divisão A1 - Categoria Sub 14 - Temporda 2018</td>
+                            <td width="140">
+                                <a class="btn btn-sm btn-success" href="#">Abrir</a>
+                                <button class="btn btn-sm btn-secondary">Excluir</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Campeonato Metropolitano - Divisão A1 - Categoria Sub 14 - Temporda 2018</td>
+                            <td width="140">
+                                <a class="btn btn-sm btn-success" href="#">Abrir</a>
+                                <button class="btn btn-sm btn-secondary">Excluir</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="solicitar_email_favoritos" class="h-100 w-100 justify-content-center align-items-center d-flex">
+                    <form action="#" id="form_buscar_favoritos">
+                        <div class="form-group">
+                            <label for="email" class="d-block text-center">Digite o seu email</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="email" id="email_buscar" placeholder="Digite o seu e-mail">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" id="buscar_favoritos">Buscar Favoritos</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="adicionar_campeonato_aos_favoritos" class="h-100 w-100 justify-content-center align-items-center d-none">
+                    <form action="#" id="form_adicionar_favoritos">
+                        <div class="form-group">
+                            <label for="email" class="d-block text-center">Digite o seu email</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="email" data-idevento="908" id="dados_adicionar_evento" placeholder="Digite o seu e-mail">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" id="btn_submit_adicionar_favorito">Adicionar aos Favoritos</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-none w-100 h-100 justify-content-center align-items-center" id="loader">
+                    <img src="https://eventos.admfutsal.com.br/images/preloader.gif" alt="Carregando..." class="img-fluid">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div><script src="https://eventos.admfutsal.com.br/js/app.js"></script>
+<script>
+    var id_evento = 908;
+
+    function formataHtmlSelects(data) {
+
+        console.log(data);
+        const evento = data.evento;
+        const temporadas = data.temporadas;
+        const titulos = data.titulos;
+        const categorias = data.categorias;
+        const divisoes = data.divisoes;
+
+        let htmlTemporadas = '';
+        Object.values(temporadas).forEach(item => {
+            htmlTemporadas += '<option '+ (evento.temporada == item ? 'selected' : '') +' value="'+ item +'">'+ item +'</option>';
+        });
+        $('#select_temporada').html(htmlTemporadas).removeAttr('disabled');
+
+        let htmlTitulos = titulos.map(item => {
+            return '<option '+ (evento.id_titulo == item.id_titulo ? 'selected' : '') +' value="'+item.id_titulo+'">'+ item.nome +'</option>';
+        });
+        $('#select_titulo').html(htmlTitulos).removeAttr('disabled');
+
+        let htmlCategorias = categorias.map(item => {
+            return '<option '+ (evento.id_evento == item.id_evento ? 'selected' : '') +' value="'+item.id_evento+'">'+ item.categoria.nome +'</option>';
+        });
+        $('#select_categoria').html(htmlCategorias).removeAttr('disabled');
+
+        let htmlDivisoes = divisoes.map(item => {
+            return '<option '+ (evento.id_divisao == item.id_divisao ? 'selected' : '') +' value="'+item.id_divisao+'">'+ item.nome +'</option>';
+        });
+        $('#select_divisao').html(htmlDivisoes).removeAttr('disabled');
+    } 
+
+    $(function() {
+        $.ajax({
+            url: '/dadosevento/'+id_evento,
+            method: 'GET',
+            dataType: 'JSON',
+            success: function(data) {
+                formataHtmlSelects(data);
+            }
+        })
+    });
+</script>
+</body>
+</html>
