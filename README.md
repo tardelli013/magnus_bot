@@ -2,15 +2,19 @@
 
 Bot que envia diariamente para um grupo de WhatsApp a classificação e a artilharia do **Campeonato Paulista de Futsal Sub-7, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
-A mensagem inclui:
+A mensagem é enviada como **imagem PNG** (evita quebras de formatação no WhatsApp) e inclui:
 - Classificação parcial: posição do time alvo, **até 3 acima** e **até 3 abaixo**.
 - Artilheiros do time alvo.
+- Top 5 times na classificação geral.
 - Top 5 artilheiros gerais do campeonato.
+
+A imagem gerada também é salva em `generated-images/` para recuperação manual.
 
 ## Stack
 
 - Node.js 20+
 - [cheerio](https://cheerio.js.org/) — parsing HTML
+- [canvas](https://github.com/Automattic/node-canvas) — renderização da mensagem como imagem PNG
 - [whatsapp-web.js](https://wwebjs.dev/) — envio via WhatsApp Web (não-oficial)
 
 ## Instalação
@@ -127,21 +131,26 @@ Crie uma tarefa que execute `node enviar.js` no diretório do projeto no horári
 
 ```
 magnus_bot/
-├── enviar.js              # entry point
-├── scraper.js             # fetch + parse → JSON
-├── formatter.js           # JSON → mensagem WhatsApp
-├── whatsapp.js            # whatsapp-web.js (auth, send, lista grupos)
+├── enviar.js                    # entry point
+├── scraper.js                   # fetch + parse → JSON
+├── formatter.js                 # JSON → texto formatado
+├── image-renderer.js            # texto → PNG (node-canvas)
+├── whatsapp.js                  # whatsapp-web.js (auth, send, lista grupos)
 ├── src/
-│   ├── parser.js          # cheerio: parseClassification, parseScorers
-│   ├── normalize.js       # normalização de nomes (acentos, case)
-│   ├── http.js            # fetch com retry/backoff/timeout
-│   ├── cache.js           # data/last-run.json
+│   ├── parser.js                # cheerio: parseClassification, parseScorers
+│   ├── normalize.js             # normalização de nomes (acentos, case)
+│   ├── http.js                  # fetch com retry/backoff/timeout
+│   ├── cache.js                 # data/last-run.json
 │   └── logger.js
-├── samples/               # HTML capturado pra fixtures de teste
-├── tests/parser.test.js   # 13 testes do parser e regras de janela
-├── data/last-run.json     # cache do último scrape (gitignored)
-├── debug/                 # HTMLs salvos quando parser falha (gitignored)
-├── auth/                  # sessão whatsapp-web.js (gitignored)
+├── samples/                     # HTML capturado pra fixtures de teste
+├── tests/
+│   ├── parser.test.js           # testes do parser e regras de janela
+│   ├── image-renderer.test.js   # testes do renderer PNG
+│   └── whatsapp.test.js         # testes do sendToGroup
+├── generated-images/            # PNGs gerados a cada execução (gitignored)
+├── data/last-run.json           # cache do último scrape (gitignored)
+├── debug/                       # HTMLs salvos quando parser falha (gitignored)
+├── auth/                        # sessão whatsapp-web.js (gitignored)
 ├── .env.example
 └── package.json
 ```
@@ -171,7 +180,8 @@ magnus_bot/
 1. `fetch` direto na URL do evento (HTML server-side, não precisa de Playwright).
 2. `cheerio` parseia a tabela `.classification_table` (primeira ocorrência) → JSON tipado.
 3. Mesma coisa para `/artilharia`.
-4. `formatter.js` monta a mensagem em monospace para a tabela alinhar no celular.
-5. `whatsapp-web.js` envia para o grupo configurado.
+4. `formatter.js` monta o texto com marcadores de estilo (bold, italic, blocos de código).
+5. `image-renderer.js` renderiza o texto como PNG usando `node-canvas` (fundo escuro, 720px de largura).
+6. A imagem é salva em `generated-images/` e enviada via `MessageMedia` pelo `whatsapp-web.js`.
 
 O scrape é cacheado em `data/last-run.json` a cada sucesso, permitindo `--from-cache` e fallback automático (com `ALLOW_STALE_CACHE=true`).
