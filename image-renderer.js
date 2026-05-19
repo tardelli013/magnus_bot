@@ -21,7 +21,7 @@ function parseLine(line, inCodeBlock) {
   if (inCodeBlock) return { type: 'code', text: line };
   if (line === '') return { type: 'empty' };
   if (/\*[^*]+\*/.test(line)) return { type: 'bold', text: line.replace(/\*/g, '') };
-  if (/^_.*_$/.test(line)) return { type: 'italic', text: line.replace(/^_|_$/g, '') };
+  if (/^_.+_$/.test(line)) return { type: 'italic', text: line.replace(/^_|_$/g, '') };
   return { type: 'text', text: line };
 }
 

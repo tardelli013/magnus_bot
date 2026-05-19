@@ -50,6 +50,11 @@ test('parseLine: bullet warning line is plain text', () => {
   assert.equal(d.text, '• algum aviso aqui');
 });
 
+test('parseLine: plain text outside code block is text, not code', () => {
+  assert.deepEqual(parseLine('plain text', false), { type: 'text', text: 'plain text' });
+  assert.deepEqual(parseLine('plain text', true), { type: 'code', text: 'plain text' });
+});
+
 // renderToImage tests (will fail until Task 3)
 test('renderToImage: returns a Buffer starting with PNG magic bytes', async () => {
   const buf = await renderToImage('*Título*\n_subtítulo_\n\n1. texto simples');
