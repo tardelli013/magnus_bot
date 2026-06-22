@@ -83,4 +83,42 @@ function parseScorers(html) {
   return { scorers, warnings };
 }
 
-module.exports = { parseClassification, parseScorers };
+function parseGames(html) {
+  const $ = cheerio.load(html);
+  const table = $('table.classification_table').first();
+  if (!table.length) {
+    throw new Error('parser: tabela de jogos não encontrada (seletor .classification_table)');
+  }
+
+  const rows = table.find('tbody tr').toArray();
+  const games = [];
+  rows.forEach((tr) => {
+    const $tr = $(tr);
+    const names = $tr.find('span.nome_clube').map((_, s) => cleanText($(s).text())).get();
+    const resultSpan = $tr.find('span.result').first();
+    const tds = $tr.find('td');
+    if (names.length < 2 || !resultSpan.length || tds.length < 4) return;
+
+    const date = cleanText($(tds[0]).text());
+    const time = cleanText($(tds[1]).text()).replace(/h$/i, '');
+    const venue = cleanText($tr.find('a.show-ginasio-modal').first().text());
+    const resultText = cleanText(resultSpan.text());
+    const score = resultText.match(/(\d+)\s*x\s*(\d+)/i);
+    const played = Boolean(score);
+
+    games.push({
+      date,
+      time,
+      venue,
+      home: names[0],
+      away: names[1],
+      homeScore: played ? parseInt10(score[1]) : null,
+      awayScore: played ? parseInt10(score[2]) : null,
+      played,
+    });
+  });
+
+  return games;
+}
+
+module.exports = { parseClassification, parseScorers, parseGames };

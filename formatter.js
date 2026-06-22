@@ -12,8 +12,9 @@ function truncate(s, max) {
 }
 
 function shortClub(name) {
-  // Remove sufixos comuns "- ASF/MAGNU" e similares para encurtar
-  return name.replace(/\s*-\s*[A-Z/]{2,}.*$/, '').trim();
+  // Remove sufixos comuns "- ASF/MAGNU" ou "| ATIVO" e similares para encurtar.
+  // Exige 2+ caracteres após o separador para preservar variantes "- A"/"- B".
+  return String(name).replace(/\s*[-|]\s*[A-Z/]{2,}.*$/, '').trim();
 }
 
 function formatDate(iso) {
@@ -26,22 +27,40 @@ function formatDate(iso) {
   return `${dd}/${mm}/${yy} ${hh}:${mi}`;
 }
 
-function formatClassificationTable(slice, targetIndex, displayLabel) {
+const CLASSIFICATION_COLUMNS = [
+  { label: 'Pos', align: 'left', value: (r) => `${r.position}º` },
+  { label: 'Clube', align: 'left', value: (r, ctx) => ctx.label || shortClub(r.club) },
+  { label: 'Pts', align: 'right', value: (r) => String(r.points) },
+  { label: 'J', align: 'right', value: (r) => String(r.games) },
+  { label: 'V', align: 'right', value: (r) => String(r.wins) },
+  { label: 'E', align: 'right', value: (r) => String(r.draws) },
+  { label: 'D', align: 'right', value: (r) => String(r.losses) },
+  { label: 'SG', align: 'right', value: (r) => (r.goalDiff > 0 ? `+${r.goalDiff}` : String(r.goalDiff)) },
+];
+
+function buildTableModel(rows, { highlightIndex = -1, highlightLabel = null } = {}) {
+  return {
+    columns: CLASSIFICATION_COLUMNS.map((c) => ({ label: c.label, align: c.align })),
+    rows: rows.map((r, i) => {
+      const ctx = { label: i === highlightIndex ? highlightLabel : null };
+      return {
+        values: CLASSIFICATION_COLUMNS.map((c) => c.value(r, ctx)),
+        highlight: i === highlightIndex,
+      };
+    }),
+  };
+}
+
+function renderTableText(model) {
+  const widths = model.columns.map((c, ci) =>
+    Math.max(c.label.length, ...model.rows.map((r) => r.values[ci].length)));
+  const row = (cells, gutter) =>
+    gutter + cells.map((v, ci) => pad(v, widths[ci], model.columns[ci].align)).join(' ');
   const lines = [];
+  if (model.title) lines.push(model.title);
   lines.push('```');
-  lines.push('Pos  Clube                   Pts  J  V  E  D');
-  slice.forEach((row, i) => {
-    const isTarget = i === targetIndex;
-    const pos = pad(String(row.position) + 'º', 4);
-    const clubName = isTarget && displayLabel ? displayLabel : shortClub(row.club);
-    const club = pad(truncate(clubName, 22), 22);
-    const pts = pad(row.points, 3, 'right');
-    const j = pad(row.games, 2, 'right');
-    const v = pad(row.wins, 2, 'right');
-    const e = pad(row.draws, 2, 'right');
-    const d = pad(row.losses, 2, 'right');
-    lines.push(`${pos}  ${club}  ${pts} ${j} ${v} ${e} ${d}`);
-  });
+  lines.push(row(model.columns.map((c) => c.label), '  '));
+  model.rows.forEach((r) => lines.push(row(r.values, r.highlight ? '▸ ' : '  ')));
   lines.push('```');
   return lines.join('\n');
 }
@@ -71,54 +90,78 @@ function formatTopScorers(topScorers) {
   return lines.join('\n');
 }
 
+function formatNextGame(nextGame, teamLabel) {
+  if (!nextGame) {
+    return '📅 *PRÓXIMO JOGO*\n_⚠️ Sem próximo jogo agendado._';
+  }
+  const opponent = truncate(shortClub(nextGame.opponent), 34);
+  const matchup = nextGame.isHome
+    ? `${teamLabel} x ${opponent}`
+    : `${opponent} x ${teamLabel}`;
+  const mando = nextGame.isHome ? 'mandante' : 'visitante';
+  const lines = ['📅 *PRÓXIMO JOGO*'];
+  lines.push(`${nextGame.date} às ${nextGame.time} (${mando})`);
+  lines.push(matchup);
+  if (nextGame.venue) lines.push(`📍 ${truncate(nextGame.venue, 40)}`);
+  return lines.join('\n');
+}
+
 function formatTeamLabel(targetTeam) {
   return shortClub(targetTeam).toUpperCase();
 }
 
-function format(payload, opts = {}) {
+function buildReportParts(payload, opts = {}) {
   const { targetTeam = 'TIME ALVO', displayName, stale = false } = opts;
   const teamLabel = (displayName || formatTeamLabel(targetTeam)).toUpperCase();
-  const { source, classification, targetIndex, topClassification, teamScorers, topScorers, scrapedAt, warnings = [] } = payload;
+  const { source, classification, targetIndex, topClassification, teamScorers, topScorers, nextGame, scrapedAt, warnings = [] } = payload;
 
   const parts = [];
 
   if (stale) {
-    parts.push(`⚠️ *Dados desatualizados* (de ${formatDate(scrapedAt)} — scrape de hoje falhou)\n`);
+    parts.push({ type: 'text', text: `⚠️ *Dados desatualizados* (de ${formatDate(scrapedAt)} — scrape de hoje falhou)` });
   }
 
-  parts.push(`🏆 *CLASSIFICAÇÃO — ${source.category} Divisão ${source.division}*`);
-  parts.push(`_Atualizado: ${formatDate(scrapedAt)}_\n`);
+  parts.push({
+    type: 'text',
+    text: `🏆 *CLASSIFICAÇÃO — ${source.category} Divisão ${source.division}*\n_Atualizado: ${formatDate(scrapedAt)}_`,
+  });
 
   if (classification && classification.length) {
-    parts.push(formatClassificationTable(classification, targetIndex, teamLabel));
+    parts.push({
+      type: 'grid',
+      model: buildTableModel(classification, { highlightIndex: targetIndex, highlightLabel: teamLabel }),
+    });
   } else {
-    parts.push(`⚠️ Classificação indisponível.`);
+    parts.push({ type: 'text', text: '⚠️ Classificação indisponível.' });
   }
 
-  parts.push('');
-  parts.push(formatTeamScorers(teamScorers, teamLabel));
+  parts.push({ type: 'text', text: formatNextGame(nextGame, teamLabel) });
+  parts.push({ type: 'text', text: formatTeamScorers(teamScorers, teamLabel) });
 
-  parts.push('');
-  parts.push('📊 *TOP 5 CLASSIFICAÇÃO GERAL*');
   if (topClassification && topClassification.length) {
-    parts.push(formatClassificationTable(topClassification, -1, null));
+    const model = buildTableModel(topClassification, {});
+    model.title = '📊 *TOP 5 CLASSIFICAÇÃO GERAL*';
+    parts.push({ type: 'grid', model });
   } else {
-    parts.push('_⚠️ Classificação geral indisponível._');
+    parts.push({ type: 'text', text: '📊 *TOP 5 CLASSIFICAÇÃO GERAL*\n_⚠️ Classificação geral indisponível._' });
   }
 
-  parts.push('');
-  parts.push(formatTopScorers(topScorers));
+  parts.push({ type: 'text', text: formatTopScorers(topScorers) });
 
   if (warnings.length) {
     const userVisibleWarnings = warnings.filter((w) => !w.startsWith('time alvo encontrado por match parcial'));
     if (userVisibleWarnings.length) {
-      parts.push('');
-      parts.push('_⚠️ Avisos:_');
-      userVisibleWarnings.forEach((w) => parts.push(`• ${w}`));
+      parts.push({ type: 'text', text: ['_⚠️ Avisos:_', ...userVisibleWarnings.map((w) => `• ${w}`)].join('\n') });
     }
   }
 
-  return parts.join('\n');
+  return parts;
 }
 
-module.exports = { format, shortClub, truncate, pad };
+function format(payload, opts = {}) {
+  return buildReportParts(payload, opts)
+    .map((p) => (p.type === 'grid' ? renderTableText(p.model) : p.text))
+    .join('\n\n');
+}
+
+module.exports = { format, buildReportParts, buildTableModel, renderTableText, formatNextGame, shortClub, truncate, pad };

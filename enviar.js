@@ -6,7 +6,7 @@ const cache = require('./src/cache');
 const { scrape } = require('./scraper');
 const { format } = require('./formatter');
 const path = require('path');
-const { renderToImage, saveImage } = require('./image-renderer');
+const { renderReport, saveImage } = require('./image-renderer');
 const { MessageMedia } = require('whatsapp-web.js');
 
 const FLAGS = {
@@ -130,7 +130,7 @@ async function main() {
 
   const { payload, stale } = await obtainPayload();
   const message = format(payload, { targetTeam, displayName, stale });
-  const buffer = await renderToImage(message);
+  const buffer = await renderReport(payload, { targetTeam, displayName, stale });
   const imagePath = await saveImage(buffer, path.join(__dirname, 'generated-images'));
   logger.info(`imagem salva: ${imagePath}`);
 

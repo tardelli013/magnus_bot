@@ -4,7 +4,24 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const { parseLine, renderToImage, saveImage } = require('../image-renderer');
+const { parseLine, renderToImage, renderReport, saveImage } = require('../image-renderer');
+
+const FULL_PAYLOAD = {
+  source: { category: 'Sub-7', division: 'A1', season: '2026' },
+  scrapedAt: '2026-06-22T12:00:00Z',
+  classification: [
+    { position: 23, club: 'A.D. INDAIATUBA', points: 4, games: 14, wins: 1, draws: 1, losses: 12, goalsFor: 15, goalsAgainst: 62, goalDiff: -47 },
+    { position: 24, club: 'ASSOCIAÇÃO SOROCABANA DE FUTSAL - ASF/MAGNU', points: 4, games: 14, wins: 0, draws: 4, losses: 10, goalsFor: 17, goalsAgainst: 47, goalDiff: -30 },
+  ],
+  targetIndex: 1,
+  topClassification: [
+    { position: 1, club: 'SÃO PAULO FC - A', points: 42, games: 14, wins: 14, draws: 0, losses: 0, goalsFor: 82, goalsAgainst: 7, goalDiff: 75 },
+  ],
+  teamScorers: [{ name: 'KEVIN MATTOS PANTOJO', goals: 5 }],
+  topScorers: [{ position: 1, name: 'MATHEUS SCHIMIDT', club: 'LIGA SANCAETANENSE DE F.S.', goals: 26 }],
+  nextGame: { date: '27/06', time: '08:30', venue: 'GINÁSIO CIEF - ITAPEVI', opponent: 'ASSOCIAÇÃO DESPORTIVA OLIMPIK | ATIVO', isHome: false },
+  warnings: [],
+};
 
 // parseLine tests
 test('parseLine: codeToggle for ``` regardless of inCodeBlock state', () => {
@@ -88,6 +105,23 @@ test('renderToImage: handles full message format without throwing', async () => 
   ].join('\n');
   const buf = await renderToImage(msg);
   assert.ok(buf.length > 5000);
+});
+
+// renderReport tests (grid de verdade a partir do payload)
+test('renderReport: retorna PNG válido', async () => {
+  const buf = await renderReport(FULL_PAYLOAD, { targetTeam: 'ASSOCIAÇÃO SOROCABANA DE FUTSAL', displayName: 'MAGNUS' });
+  assert.ok(Buffer.isBuffer(buf));
+  assert.equal(buf[0], 0x89);
+  assert.equal(buf[1], 0x50);
+  assert.equal(buf[2], 0x4e);
+  assert.equal(buf[3], 0x47);
+  assert.ok(buf.length > 5000, `buffer pequeno: ${buf.length}`);
+});
+
+test('renderReport: não lança com classificação vazia (fallback)', async () => {
+  const payload = { ...FULL_PAYLOAD, classification: [], topClassification: [], nextGame: null };
+  const buf = await renderReport(payload, { targetTeam: 'MAGNUS', displayName: 'MAGNUS' });
+  assert.ok(Buffer.isBuffer(buf));
 });
 
 // saveImage tests (will fail until Task 4)
