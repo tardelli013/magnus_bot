@@ -1,11 +1,12 @@
 # magnus-bot
 
-Bot que envia diariamente para um grupo de WhatsApp a classificação e a artilharia do **Campeonato Paulista de Futsal Sub-7, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
+Bot que envia diariamente para um grupo de WhatsApp a classificação, o próximo jogo e a artilharia do **Campeonato Paulista de Futsal Sub-7, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
 A mensagem é enviada como **imagem PNG** (evita quebras de formatação no WhatsApp) e inclui:
-- Classificação parcial: posição do time alvo, **até 3 acima** e **até 3 abaixo**.
+- **Classificação parcial** em grid: posição do time alvo, **até 3 acima** e **até 3 abaixo**, com a linha do time **destacada** e coluna de saldo de gols (SG).
+- **Próximo jogo** do time alvo: data, hora, mando (mandante/visitante), adversário e ginásio.
 - Artilheiros do time alvo.
-- Top 5 times na classificação geral.
+- Top 5 times na classificação geral (também em grid).
 - Top 5 artilheiros gerais do campeonato.
 
 A imagem gerada também é salva em `generated-images/` para recuperação manual.
@@ -95,7 +96,7 @@ node enviar.js --help
 npm run dry        # dry-run
 npm run cache      # dry-run + from-cache
 npm run groups     # lista grupos
-npm test           # roda testes do parser
+npm test           # roda todos os testes (node --test)
 npm start          # envia (mesma coisa que node enviar.js)
 ```
 
@@ -132,20 +133,23 @@ Crie uma tarefa que execute `node enviar.js` no diretório do projeto no horári
 ```
 magnus_bot/
 ├── enviar.js                    # entry point
-├── scraper.js                   # fetch + parse → JSON
-├── formatter.js                 # JSON → texto formatado
-├── image-renderer.js            # texto → PNG (node-canvas)
+├── scraper.js                   # fetch + parse (classificação, artilharia, jogos) → JSON
+├── formatter.js                 # JSON → modelo de relatório (texto + grids)
+├── image-renderer.js            # relatório → PNG com grid (node-canvas)
 ├── whatsapp.js                  # whatsapp-web.js (auth, send, lista grupos)
 ├── src/
-│   ├── parser.js                # cheerio: parseClassification, parseScorers
+│   ├── parser.js                # cheerio: parseClassification, parseScorers, parseGames
 │   ├── normalize.js             # normalização de nomes (acentos, case)
 │   ├── http.js                  # fetch com retry/backoff/timeout
 │   ├── cache.js                 # data/last-run.json
 │   └── logger.js
-├── samples/                     # HTML capturado pra fixtures de teste
+├── samples/                     # HTML capturado pra fixtures de teste (classificação, artilharia, jogos)
 ├── tests/
 │   ├── parser.test.js           # testes do parser e regras de janela
-│   ├── image-renderer.test.js   # testes do renderer PNG
+│   ├── games.test.js            # testes de parseGames, próximo jogo e formatNextGame
+│   ├── table.test.js            # testes do modelo de tabela/grid
+│   ├── formatter.test.js        # testes do shortClub
+│   ├── image-renderer.test.js   # testes do renderer PNG (renderToImage + renderReport)
 │   └── whatsapp.test.js         # testes do sendToGroup
 ├── generated-images/            # PNGs gerados a cada execução (gitignored)
 ├── data/last-run.json           # cache do último scrape (gitignored)
@@ -179,9 +183,9 @@ magnus_bot/
 
 1. `fetch` direto na URL do evento (HTML server-side, não precisa de Playwright).
 2. `cheerio` parseia a tabela `.classification_table` (primeira ocorrência) → JSON tipado.
-3. Mesma coisa para `/artilharia`.
-4. `formatter.js` monta o texto com marcadores de estilo (bold, italic, blocos de código).
-5. `image-renderer.js` renderiza o texto como PNG usando `node-canvas` (fundo escuro, 720px de largura).
+3. Mesma coisa para `/artilharia` e `/jogos` — desta última sai o **próximo jogo** (primeiro jogo ainda não disputado do time, a partir da data atual).
+4. `formatter.js` monta um **modelo de relatório** (`buildReportParts`) compartilhado entre texto e imagem: seções de texto + grids de classificação (`buildTableModel`).
+5. `image-renderer.js` (`renderReport`) desenha o PNG com `node-canvas` (fundo escuro, 720px), renderizando a classificação como **grid de verdade** — cabeçalho, zebra, linha do time destacada e coluna SG. O `format()` reaproveita o mesmo modelo para a versão em texto (console/`--dry-run`).
 6. A imagem é salva em `generated-images/` e enviada via `MessageMedia` pelo `whatsapp-web.js`.
 
 O scrape é cacheado em `data/last-run.json` a cada sucesso, permitindo `--from-cache` e fallback automático (com `ALLOW_STALE_CACHE=true`).
