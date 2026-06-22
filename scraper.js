@@ -58,7 +58,13 @@ function dateKey(dateStr, season) {
   return year * 10000 + month * 100 + day;
 }
 
-function selectNextGame(games, targetTeam, { season, referenceDate = new Date() } = {}) {
+function positionOf(classification, name) {
+  if (!classification || !classification.length) return null;
+  const row = classification.find((r) => matchesTeam(r.club, name).match);
+  return row ? row.position : null;
+}
+
+function selectNextGame(games, targetTeam, { season, referenceDate = new Date(), classification = [] } = {}) {
   const refKey =
     referenceDate.getFullYear() * 10000 +
     (referenceDate.getMonth() + 1) * 100 +
@@ -80,7 +86,15 @@ function selectNextGame(games, targetTeam, { season, referenceDate = new Date() 
 
   return {
     found: true,
-    game: { date: g.date, time: g.time, venue: g.venue, opponent, isHome },
+    game: {
+      date: g.date,
+      time: g.time,
+      venue: g.venue,
+      opponent,
+      isHome,
+      targetPosition: positionOf(classification, targetTeam),
+      opponentPosition: positionOf(classification, opponent),
+    },
     warnings: [],
   };
 }
@@ -145,7 +159,7 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
   try {
     const html = await fetchWithRetry(gamesUrl);
     const games = parseGames(html);
-    const sel = selectNextGame(games, targetTeam, { season });
+    const sel = selectNextGame(games, targetTeam, { season, classification: fullClassification });
     warnings.push(...sel.warnings);
     nextGame = sel.game;
     logger.info(

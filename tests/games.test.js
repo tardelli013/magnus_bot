@@ -97,6 +97,28 @@ test('selectNextGame: identifica mando quando o time é mandante', () => {
   assert.equal(sel.game.opponent, 'TIME A');
 });
 
+test('selectNextGame: inclui posição do time e do adversário quando há classificação', () => {
+  const games = [fakeGame('25/06', 'TIME A', SOROCABANA)]; // SOROCABANA visitante, adversário = TIME A
+  const classification = [
+    { position: 14, club: 'TIME A' },
+    { position: 24, club: `${SOROCABANA} - ASF/MAGNU` },
+  ];
+  const sel = selectNextGame(games, SOROCABANA, {
+    season: '2026',
+    referenceDate: new Date(2026, 5, 22),
+    classification,
+  });
+  assert.equal(sel.game.targetPosition, 24);
+  assert.equal(sel.game.opponentPosition, 14);
+});
+
+test('selectNextGame: posições ficam null quando não há classificação', () => {
+  const games = [fakeGame('25/06', SOROCABANA, 'TIME A')];
+  const sel = selectNextGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
+  assert.equal(sel.game.targetPosition, null);
+  assert.equal(sel.game.opponentPosition, null);
+});
+
 test('selectNextGame: sem jogos futuros retorna found=false', () => {
   const games = [fakeGame('10/06', SOROCABANA, 'TIME A')];
   const sel = selectNextGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
@@ -129,6 +151,23 @@ test('formatNextGame: nome do adversário aparece completo após shortClub', () 
   );
   assert.match(out, /ASSOCIAÇÃO DESPORTIVA OLIMPIK x MAGNUS/);
   assert.doesNotMatch(out, /…/);
+});
+
+test('formatNextGame: mostra a posição de cada time entre parênteses', () => {
+  const out = formatNextGame(
+    { date: '27/06', time: '08:30', venue: 'GINÁSIO CIEF - ITAPEVI', opponent: 'OLIMPIK', isHome: false, opponentPosition: 14, targetPosition: 24 },
+    'MAGNUS'
+  );
+  assert.match(out, /OLIMPIK \(14º\) x MAGNUS \(24º\)/);
+});
+
+test('formatNextGame: omite parênteses quando a posição está ausente', () => {
+  const out = formatNextGame(
+    { date: '04/07', time: '09:00', venue: 'GINÁSIO ARENA SOROCABA', opponent: 'PORTUGUESA', isHome: true },
+    'MAGNUS'
+  );
+  assert.match(out, /MAGNUS x PORTUGUESA/);
+  assert.doesNotMatch(out, /\(\d+º\)/); // sem marcador de posição (o "(mandante)" é esperado)
 });
 
 test('formatNextGame: mandante mostra "MAGNUS x OPONENTE"', () => {

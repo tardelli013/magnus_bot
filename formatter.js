@@ -90,14 +90,19 @@ function formatTopScorers(topScorers) {
   return lines.join('\n');
 }
 
+function withPosition(name, position) {
+  return position != null ? `${name} (${position}º)` : name;
+}
+
 function formatNextGame(nextGame, teamLabel) {
   if (!nextGame) {
     return '📅 *PRÓXIMO JOGO*\n_⚠️ Sem próximo jogo agendado._';
   }
-  const opponent = truncate(shortClub(nextGame.opponent), 34);
+  const opponent = withPosition(truncate(shortClub(nextGame.opponent), 34), nextGame.opponentPosition);
+  const team = withPosition(teamLabel, nextGame.targetPosition);
   const matchup = nextGame.isHome
-    ? `${teamLabel} x ${opponent}`
-    : `${opponent} x ${teamLabel}`;
+    ? `${team} x ${opponent}`
+    : `${opponent} x ${team}`;
   const mando = nextGame.isHome ? 'mandante' : 'visitante';
   const lines = ['📅 *PRÓXIMO JOGO*'];
   lines.push(`${nextGame.date} às ${nextGame.time} (${mando})`);
