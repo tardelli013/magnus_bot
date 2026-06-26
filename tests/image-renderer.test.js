@@ -134,10 +134,10 @@ test('saveImage: creates directory if it does not exist', async () => {
   assert.ok(fs.existsSync(newDir), 'diretório deve ser criado');
 });
 
-test('saveImage: saves file with name matching classificacao-YYYY-MM-DD.png', async () => {
+test('saveImage: saves file with name matching classificacao-YYYY-MM-DD-HHMM.png', async () => {
   const fakePng = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
   const saved = await saveImage(fakePng, tmpDir);
-  assert.match(path.basename(saved), /^classificacao-\d{4}-\d{2}-\d{2}\.png$/);
+  assert.match(path.basename(saved), /^classificacao-\d{4}-\d{2}-\d{2}-\d{4}\.png$/);
 });
 
 test('saveImage: returns absolute path of saved file', async () => {

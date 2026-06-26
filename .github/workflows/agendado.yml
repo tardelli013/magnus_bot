@@ -1,0 +1,58 @@
+name: Gera imagem diária
+
+# Roda todo dia às 20:00 BRT (23:00 UTC) e também por disparo manual.
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+# Precisa escrever no repo pra commitar a imagem.
+permissions:
+  contents: write
+
+concurrency:
+  group: gera-imagem
+  cancel-in-progress: false
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    env:
+      # Fuso pra data/hora do nome do arquivo sair em BRT.
+      TZ: America/Sao_Paulo
+      # Config não-sensível do bot (edite à vontade).
+      TARGET_TEAM: ASSOCIAÇÃO SOROCABANA DE FUTSAL
+      TARGET_TEAM_DISPLAY: A.S.F. MAGNUS
+      EVENT_URL: https://eventos.admfutsal.com.br/evento/908
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Dependências de sistema do canvas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
+      - name: Instala dependências do projeto
+        run: npm ci
+
+      - name: Gera a imagem
+        run: node enviar.js
+
+      - name: Commita a imagem no repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated-images/
+          if git diff --staged --quiet; then
+            echo "Nenhuma imagem nova pra commitar."
+            exit 0
+          fi
+          git commit -m "chore: imagem diária $(date '+%Y-%m-%d %H:%M')"
+          git push origin HEAD:main

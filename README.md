@@ -63,9 +63,15 @@ npm run cache      # gera a imagem a partir do cache
 npm test           # roda todos os testes (node --test)
 ```
 
-## Agendamento opcional
+## Automação
 
-### macOS / Linux — cron
+### GitHub Actions (roda na nuvem, todo dia às 20:00 BRT)
+
+O workflow `.github/workflows/agendado.yml` roda automaticamente no GitHub: gera a imagem e **commita o PNG em `generated-images/`** no próprio repositório. Os arquivos saem como `classificacao-YYYY-MM-DD-HHMM.png` (data + hora da execução, em BRT). Dá pra disparar na mão em **Actions → "Gera imagem diária" → Run workflow**.
+
+Pra mudar o horário, edite a linha `cron: '0 23 * * *'` no workflow (em UTC — `0 23` = 20:00 BRT).
+
+### Local — cron (macOS / Linux)
 ```bash
 crontab -e
 # Roda todo dia às 20:00:
@@ -82,6 +88,7 @@ Crie uma tarefa que execute `node enviar.js` no diretório do projeto no horári
 
 ```
 magnus_bot/
+├── .github/workflows/agendado.yml  # cron diário (GitHub): gera + commita a imagem
 ├── enviar.js                    # entry point
 ├── scraper.js                   # fetch + parse (classificação, artilharia, jogos) → JSON
 ├── formatter.js                 # JSON → modelo de relatório (texto + grids)
