@@ -7,36 +7,29 @@ const { scrape } = require('./scraper');
 const { format } = require('./formatter');
 const path = require('path');
 const { renderReport, saveImage } = require('./image-renderer');
-const { MessageMedia } = require('whatsapp-web.js');
 
 const FLAGS = {
-  dryRun: process.argv.includes('--dry-run'),
   fromCache: process.argv.includes('--from-cache'),
-  listGroups: process.argv.includes('--list-groups'),
-  listen: process.argv.includes('--listen'),
   noScorers: process.argv.includes('--no-scorers'),
   help: process.argv.includes('--help') || process.argv.includes('-h'),
 };
 
 function printHelp() {
   console.log(`
-magnus-bot — bot WhatsApp do campeonato de futsal ADM (Sub-7 A1)
+magnus-bot — gera a imagem da classificação do campeonato de futsal ADM (Sub-7 A1)
 
 Uso:
-  node enviar.js                  scrape + formata + envia
-  node enviar.js --dry-run        scrape + formata + printa, NÃO envia
+  node enviar.js                  scrape + formata + gera imagem em generated-images/
   node enviar.js --from-cache     usa data/last-run.json (não bate no site)
   node enviar.js --no-scorers     pula artilharia
-  node enviar.js --list-groups    lista grupos disponíveis e sai
-  node enviar.js --listen         escuta mensagens; imprime o ID do grupo quando você enviar uma
   node enviar.js --help           esta ajuda
 
 Variáveis de ambiente (.env):
-  WHATSAPP_GROUP_ID   ID do grupo destino (use --list-groups para descobrir)
-  TARGET_TEAM         nome do time alvo
-  EVENT_URL           URL base do evento
-  ALLOW_STALE_CACHE   true para enviar cache antigo em caso de falha do scrape
-  DEBUG               true para logs DEBUG
+  TARGET_TEAM          nome do time alvo
+  TARGET_TEAM_DISPLAY  nome amigável exibido na imagem
+  EVENT_URL            URL base do evento
+  ALLOW_STALE_CACHE    true para usar cache antigo em caso de falha do scrape
+  DEBUG                true para logs DEBUG
 `.trim());
 }
 
@@ -44,37 +37,6 @@ function requireEnv(name) {
   const v = process.env[name];
   if (!v) throw new Error(`variável de ambiente obrigatória ausente: ${name}`);
   return v;
-}
-
-async function runListGroups() {
-  const { start, listGroups, shutdown } = require('./whatsapp');
-  const client = await start();
-  try {
-    const groups = await listGroups(client);
-    if (!groups.length) {
-      logger.warn('nenhum grupo encontrado');
-      return;
-    }
-    console.log('\nGrupos disponíveis:');
-    groups
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach((g) => {
-        console.log(`  ${g.id}\n    └─ "${g.name}" (${g.participants} participantes)`);
-      });
-    console.log(`\nCopie o ID e cole em WHATSAPP_GROUP_ID no .env`);
-  } finally {
-    await shutdown(client);
-  }
-}
-
-async function runListen() {
-  const { start, listenForGroupId, shutdown } = require('./whatsapp');
-  const client = await start();
-  try {
-    await listenForGroupId(client);
-  } finally {
-    await shutdown(client);
-  }
 }
 
 async function obtainPayload() {
@@ -115,16 +77,6 @@ async function main() {
     return;
   }
 
-  if (FLAGS.listGroups) {
-    await runListGroups();
-    return;
-  }
-
-  if (FLAGS.listen) {
-    await runListen();
-    return;
-  }
-
   const targetTeam = requireEnv('TARGET_TEAM');
   const displayName = process.env.TARGET_TEAM_DISPLAY || targetTeam;
 
@@ -132,24 +84,9 @@ async function main() {
   const message = format(payload, { targetTeam, displayName, stale });
   const buffer = await renderReport(payload, { targetTeam, displayName, stale });
   const imagePath = await saveImage(buffer, path.join(__dirname, 'generated-images'));
+
+  console.log(`\n${message}\n`);
   logger.info(`imagem salva: ${imagePath}`);
-
-  if (FLAGS.dryRun) {
-    console.log('\n=== DRY RUN — mensagem que SERIA enviada (como imagem) ===\n');
-    console.log(message);
-    console.log(`\n=== imagem salva em ${imagePath} ===`);
-    return;
-  }
-
-  const groupId = requireEnv('WHATSAPP_GROUP_ID');
-  const { start, sendToGroup, shutdown } = require('./whatsapp');
-  const media = new MessageMedia('image/png', buffer.toString('base64'));
-  const client = await start();
-  try {
-    await sendToGroup(client, groupId, null, media);
-  } finally {
-    await shutdown(client);
-  }
 }
 
 main().catch((err) => {
