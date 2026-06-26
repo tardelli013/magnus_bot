@@ -5,7 +5,7 @@ const path = require('path');
 
 const { parseClassification, parseScorers } = require('../src/parser');
 const { normalize, matchesTeam } = require('../src/normalize');
-const { selectTeamWindow } = require('../scraper');
+const { selectTeamWindow, TEAMS_ABOVE, TEAMS_BELOW } = require('../scraper');
 
 const SAMPLES = path.join(__dirname, '..', 'samples');
 const classificationHtml = fs.readFileSync(path.join(SAMPLES, 'classification.html'), 'utf8');
@@ -110,6 +110,22 @@ test('selectTeamWindow: alvo na última pos não inventa linhas abaixo', () => {
   assert.equal(w.found, true);
   assert.equal(w.slice.length, 4); // 3 acima + alvo
   assert.equal(w.targetIndex, 3);
+});
+
+test('janela de produção mostra 5 times acima do alvo', () => {
+  assert.equal(TEAMS_ABOVE, 5);
+});
+
+test('selectTeamWindow: alvo em último (cenário Magnus) mostra 5 acima', () => {
+  const fakeClass = Array.from({ length: 24 }, (_, i) => ({
+    position: i + 1,
+    club: i === 23 ? 'A.S.F. MAGNUS' : `TIME ${i + 1}`,
+    points: 0, games: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, goalDiff: 0,
+  }));
+  const w = selectTeamWindow(fakeClass, 'A.S.F. MAGNUS', TEAMS_ABOVE, TEAMS_BELOW);
+  assert.equal(w.found, true);
+  assert.equal(w.slice.length, 6); // 5 acima + o próprio alvo
+  assert.equal(w.targetIndex, 5);
 });
 
 test('selectTeamWindow: alvo inexistente retorna found=false', () => {

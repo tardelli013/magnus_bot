@@ -99,10 +99,16 @@ function fitText(ctx, text, maxWidth) {
 
 function gridColumnWidths(ctx, model, area) {
   const natural = model.columns.map((c, ci) => {
+    // mede cada texto com a MESMA fonte com que será desenhado (drawGrid):
+    // cabeçalho e linha destacada em bold, demais linhas em normal. O bold é
+    // mais largo em algumas fontes (ex.: CI Linux), então medir tudo em normal
+    // subdimensionava a célula da linha destacada e abreviava com "…".
     ctx.font = 'bold 14px sans-serif';
     let w = ctx.measureText(c.label).width;
-    ctx.font = '14px sans-serif';
-    for (const r of model.rows) w = Math.max(w, ctx.measureText(r.values[ci]).width);
+    for (const r of model.rows) {
+      ctx.font = r.highlight ? 'bold 14px sans-serif' : '14px sans-serif';
+      w = Math.max(w, ctx.measureText(r.values[ci]).width);
+    }
     return Math.ceil(w) + GRID_PAD_X * 2;
   });
   const clubIdx = 1; // coluna "Clube" é flexível: ocupa o espaço restante
@@ -241,4 +247,4 @@ async function saveImage(buffer, dir) {
   return filepath;
 }
 
-module.exports = { parseLine, renderToImage, renderReport, drawGrid, saveImage };
+module.exports = { parseLine, renderToImage, renderReport, drawGrid, gridColumnWidths, fitText, GRID_PAD_X, saveImage };

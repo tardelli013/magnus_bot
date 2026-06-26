@@ -7,6 +7,10 @@ const { matchesTeam } = require('./src/normalize');
 
 const DEBUG_DIR = path.join(__dirname, 'debug');
 
+// Quantos times mostrar ao redor do alvo no grid de classificação.
+const TEAMS_ABOVE = 5;
+const TEAMS_BELOW = 3;
+
 function ensureDebugDir() {
   if (!fs.existsSync(DEBUG_DIR)) fs.mkdirSync(DEBUG_DIR, { recursive: true });
 }
@@ -119,7 +123,7 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
     throw err;
   }
 
-  const window = selectTeamWindow(fullClassification, targetTeam, 3, 3);
+  const window = selectTeamWindow(fullClassification, targetTeam, TEAMS_ABOVE, TEAMS_BELOW);
   warnings.push(...window.warnings);
   if (!window.found) {
     logger.warn('time alvo NÃO encontrado na classificação');
@@ -190,4 +194,4 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
   };
 }
 
-module.exports = { scrape, selectTeamWindow, selectNextGame };
+module.exports = { scrape, selectTeamWindow, selectNextGame, TEAMS_ABOVE, TEAMS_BELOW };
