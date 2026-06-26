@@ -4,7 +4,6 @@ debug/
 .env
 *.log
 .DS_Store
-generated-images/
 
 # IDE
 .idea/
