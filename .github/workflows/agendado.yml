@@ -27,6 +27,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Histórico completo para o rebase do push ser confiável (sem shallow).
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -55,4 +58,16 @@ jobs:
             exit 0
           fi
           git commit -m "chore: imagem diária $(date '+%Y-%m-%d %H:%M')"
-          git push origin HEAD:main
+          # O remoto pode ter avançado (push externo ou outro run) entre o
+          # checkout e o push. Como a imagem tem nome único, rebaseamos sobre
+          # o remoto e tentamos de novo — nunca há conflito de conteúdo.
+          for tentativa in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo "Push OK na tentativa $tentativa."
+              exit 0
+            fi
+            echo "Push rejeitado; rebase sobre origin/main e nova tentativa ($tentativa)..."
+            git pull --rebase origin main
+          done
+          echo "Falha ao empurrar a imagem após 5 tentativas." >&2
+          exit 1
