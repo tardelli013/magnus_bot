@@ -1,0 +1,63 @@
+name: Gera e envia imagem (agendado)
+
+# Roda sozinho no horário definido (UTC) e também pode ser disparado manual.
+on:
+  schedule:
+    # 23:00 UTC = 20:00 BRT, todo dia. Edite aqui pra mudar o horário/frequência.
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: agendado-drive
+  cancel-in-progress: false
+
+jobs:
+  gera-e-envia:
+    runs-on: ubuntu-latest
+    env:
+      # Config não-sensível do bot (pode editar à vontade).
+      TARGET_TEAM: ASSOCIAÇÃO SOROCABANA DE FUTSAL
+      TARGET_TEAM_DISPLAY: A.S.F. MAGNUS
+      EVENT_URL: https://eventos.admfutsal.com.br/evento/908
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Dependências de sistema do canvas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+
+      - name: Instala dependências do projeto
+        run: npm ci
+
+      - name: Gera a imagem
+        run: node enviar.js
+
+      - name: Instala rclone
+        run: curl -fsSL https://rclone.org/install.sh | sudo bash
+
+      - name: Configura rclone a partir do secret
+        run: |
+          mkdir -p ~/.config/rclone
+          printf '%s' "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
+
+      - name: Envia a imagem mais recente pro Google Drive
+        run: |
+          shopt -s nullglob
+          files=(generated-images/*.png)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::nenhuma imagem gerada"
+            exit 1
+          fi
+          latest=$(printf '%s\n' "${files[@]}" | sort | tail -n 1)
+          echo "Enviando: $latest"
+          rclone copy "$latest" "gdrive:" \
+            --drive-root-folder-id "${{ secrets.GDRIVE_FOLDER_ID }}" \
+            --log-level INFO
