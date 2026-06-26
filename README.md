@@ -3,7 +3,7 @@
 Gera uma **imagem PNG** com a classificação, o próximo jogo e a artilharia do **Campeonato Paulista de Futsal Sub-7, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
 A imagem é salva em `generated-images/` a cada execução e inclui:
-- **Classificação parcial** em grid: posição do time alvo, **até 3 acima** e **até 3 abaixo**, com a linha do time **destacada** e coluna de saldo de gols (SG).
+- **Classificação parcial** em grid: posição do time alvo, **até 5 acima** e **até 3 abaixo**, com a linha do time **destacada** e coluna de saldo de gols (SG).
 - **Próximo jogo** do time alvo: data, hora, mando (mandante/visitante), adversário e ginásio.
 - Artilheiros do time alvo.
 - Top 5 times na classificação geral (também em grid).
