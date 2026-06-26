@@ -10,3 +10,6 @@ debug/
 *.iml
 .vscode/
 
+# Planos/specs gerados pelas skills do superpowers (não versionar)
+docs/superpowers/
+
