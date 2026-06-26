@@ -1,0 +1,49 @@
+name: Envia imagem pro Google Drive
+
+# Dispara quando uma imagem nova entra na main (e permite rodar manualmente).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'generated-images/**'
+  workflow_dispatch:
+
+# Evita execuções concorrentes sobrescrevendo a mesma imagem.
+concurrency:
+  group: upload-to-drive
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Seleciona a imagem mais recente
+        id: pick
+        run: |
+          shopt -s nullglob
+          files=(generated-images/*.png)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "::error::nenhuma imagem encontrada em generated-images/"
+            exit 1
+          fi
+          # nome no padrão classificacao-YYYY-MM-DD.png → ordem alfabética = ordem cronológica
+          latest=$(printf '%s\n' "${files[@]}" | sort | tail -n 1)
+          echo "path=$latest" >> "$GITHUB_OUTPUT"
+          echo "Selecionada: $latest"
+
+      - name: Instala rclone
+        run: curl -fsSL https://rclone.org/install.sh | sudo bash
+
+      - name: Configura rclone a partir do secret
+        run: |
+          mkdir -p ~/.config/rclone
+          printf '%s' "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
+
+      - name: Upload pro Google Drive
+        run: |
+          rclone copy "${{ steps.pick.outputs.path }}" "gdrive:" \
+            --drive-root-folder-id "${{ secrets.GDRIVE_FOLDER_ID }}" \
+            --log-level INFO
