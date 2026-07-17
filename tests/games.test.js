@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { parseGames } = require('../src/parser');
-const { selectNextGame } = require('../scraper');
+const { selectNextGame, selectLastGame } = require('../scraper');
 const { formatNextGame } = require('../formatter');
 
 const SAMPLES = path.join(__dirname, '..', 'samples');
@@ -71,6 +71,10 @@ test('selectNextGame: escolhe próximo jogo não disputado a partir de hoje (fix
 
 function fakeGame(date, home, away) {
   return { date, time: '10:00', venue: 'GINÁSIO X', home, away, homeScore: null, awayScore: null, played: false };
+}
+
+function fakePlayedGame(date, home, away, homeScore, awayScore) {
+  return { date, time: '10:00', venue: 'GINÁSIO X', home, away, homeScore, awayScore, played: true };
 }
 
 test('selectNextGame: ignora jogos passados ainda não disputados', () => {
@@ -176,4 +180,61 @@ test('formatNextGame: mandante mostra "MAGNUS x OPONENTE"', () => {
     'MAGNUS'
   );
   assert.match(out, /MAGNUS x PORTUGUESA/);
+});
+
+test('selectLastGame: escolhe o jogo disputado mais recente (fixture real)', () => {
+  const games = parseGames(gamesHtml);
+  const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 11, 31) });
+  assert.equal(sel.found, true);
+  assert.equal(typeof sel.game.targetScore, 'number');
+  assert.equal(typeof sel.game.opponentScore, 'number');
+  assert.ok(sel.game.opponent);
+  assert.equal(typeof sel.game.isHome, 'boolean');
+});
+
+test('selectLastGame: ignora jogos futuros e pega o disputado mais recente', () => {
+  const games = [
+    fakePlayedGame('10/06', SOROCABANA, 'TIME A', 2, 1),
+    fakePlayedGame('18/06', 'TIME B', SOROCABANA, 4, 0),
+    fakeGame('25/06', SOROCABANA, 'TIME C'), // futuro, não disputado
+  ];
+  const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
+  assert.equal(sel.found, true);
+  assert.equal(sel.game.date, '18/06');
+});
+
+test('selectLastGame: mapeia placar e mando quando o time é visitante', () => {
+  const games = [fakePlayedGame('18/06', 'TIME B', SOROCABANA, 1, 3)];
+  const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
+  assert.equal(sel.game.isHome, false);
+  assert.equal(sel.game.opponent, 'TIME B');
+  assert.equal(sel.game.targetScore, 3);   // placar do visitante (away)
+  assert.equal(sel.game.opponentScore, 1); // placar do mandante (home)
+});
+
+test('selectLastGame: mapeia placar quando o time é mandante', () => {
+  const games = [fakePlayedGame('18/06', SOROCABANA, 'TIME A', 5, 2)];
+  const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
+  assert.equal(sel.game.isHome, true);
+  assert.equal(sel.game.opponent, 'TIME A');
+  assert.equal(sel.game.targetScore, 5);
+  assert.equal(sel.game.opponentScore, 2);
+});
+
+test('selectLastGame: inclui posições do time e do adversário', () => {
+  const games = [fakePlayedGame('18/06', 'TIME A', SOROCABANA, 1, 3)];
+  const classification = [
+    { position: 12, club: 'TIME A' },
+    { position: 24, club: `${SOROCABANA} - ASF/MAGNU` },
+  ];
+  const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22), classification });
+  assert.equal(sel.game.targetPosition, 24);
+  assert.equal(sel.game.opponentPosition, 12);
+});
+
+test('selectLastGame: sem jogo disputado retorna found=false', () => {
+  const games = [fakeGame('25/06', SOROCABANA, 'TIME A')]; // futuro, não disputado
+  const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
+  assert.equal(sel.found, false);
+  assert.equal(sel.game, null);
 });

@@ -103,6 +103,43 @@ function selectNextGame(games, targetTeam, { season, referenceDate = new Date(),
   };
 }
 
+function selectLastGame(games, targetTeam, { season, referenceDate = new Date(), classification = [] } = {}) {
+  const refKey =
+    referenceDate.getFullYear() * 10000 +
+    (referenceDate.getMonth() + 1) * 100 +
+    referenceDate.getDate();
+
+  const past = games
+    .filter((g) => matchesTeam(g.home, targetTeam).match || matchesTeam(g.away, targetTeam).match)
+    .map((g) => ({ game: g, key: dateKey(g.date, season) }))
+    .filter(({ game, key }) => game.played && key != null && key <= refKey)
+    .sort((a, b) => b.key - a.key); // mais recente primeiro
+
+  if (!past.length) {
+    return { found: false, game: null, warnings: ['nenhum jogo anterior encontrado para o time alvo'] };
+  }
+
+  const g = past[0].game;
+  const isHome = matchesTeam(g.home, targetTeam).match;
+  const opponent = isHome ? g.away : g.home;
+  const targetScore = isHome ? g.homeScore : g.awayScore;
+  const opponentScore = isHome ? g.awayScore : g.homeScore;
+
+  return {
+    found: true,
+    game: {
+      date: g.date,
+      opponent,
+      isHome,
+      targetScore,
+      opponentScore,
+      targetPosition: positionOf(classification, targetTeam),
+      opponentPosition: positionOf(classification, opponent),
+    },
+    warnings: [],
+  };
+}
+
 async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
   if (!eventUrl) throw new Error('scraper: eventUrl obrigatório');
   if (!targetTeam) throw new Error('scraper: targetTeam obrigatório');
@@ -158,6 +195,7 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
   // --- Próximo jogo ---
   const season = '2026';
   let nextGame = null;
+  let lastGame = null;
   const gamesUrl = eventUrl.replace(/\/?$/, '/jogos');
   logger.info(`scraping jogos: ${gamesUrl}`);
   try {
@@ -166,10 +204,18 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
     const sel = selectNextGame(games, targetTeam, { season, classification: fullClassification });
     warnings.push(...sel.warnings);
     nextGame = sel.game;
+    const lastSel = selectLastGame(games, targetTeam, { season, classification: fullClassification });
+    warnings.push(...lastSel.warnings);
+    lastGame = lastSel.game;
     logger.info(
       nextGame
         ? `próximo jogo: ${nextGame.date} ${nextGame.time} vs ${nextGame.opponent}`
         : `jogos OK: ${games.length} jogos, nenhum futuro para o time alvo`
+    );
+    logger.info(
+      lastGame
+        ? `último jogo: ${lastGame.date} ${lastGame.opponent} (${lastGame.targetScore}x${lastGame.opponentScore})`
+        : 'nenhum jogo anterior para o time alvo'
     );
   } catch (err) {
     logger.warn('falha no scrape dos jogos (segue sem próximo jogo):', err.message);
@@ -190,8 +236,9 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
     teamScorers,
     topScorers,
     nextGame,
+    lastGame,
     warnings,
   };
 }
 
-module.exports = { scrape, selectTeamWindow, selectNextGame, TEAMS_ABOVE, TEAMS_BELOW };
+module.exports = { scrape, selectTeamWindow, selectNextGame, selectLastGame, TEAMS_ABOVE, TEAMS_BELOW };
