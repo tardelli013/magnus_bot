@@ -5,7 +5,7 @@ const path = require('path');
 
 const { parseGames } = require('../src/parser');
 const { selectNextGame, selectLastGame } = require('../scraper');
-const { formatNextGame } = require('../formatter');
+const { formatNextGame, formatLastGame } = require('../formatter');
 
 const SAMPLES = path.join(__dirname, '..', 'samples');
 const gamesHtml = fs.readFileSync(path.join(SAMPLES, 'games.html'), 'utf8');
@@ -237,4 +237,55 @@ test('selectLastGame: sem jogo disputado retorna found=false', () => {
   const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
   assert.equal(sel.found, false);
   assert.equal(sel.game, null);
+});
+
+test('formatLastGame: sem jogo mostra aviso', () => {
+  const out = formatLastGame(null, 'MAGNUS');
+  assert.match(out, /ÚLTIMO JOGO/);
+  assert.match(out, /Sem jogo anterior/i);
+});
+
+test('formatLastGame: visitante — adversário à esquerda, placar mapeado, data e mando', () => {
+  const out = formatLastGame(
+    { date: '05/07', opponent: 'JUVENTUS', isHome: false, targetScore: 3, opponentScore: 1, opponentPosition: 12, targetPosition: 24 },
+    'A.S.F. MAGNUS'
+  );
+  assert.match(out, /ÚLTIMO JOGO/);
+  assert.match(out, /05\/07 \(visitante\)/);
+  assert.match(out, /JUVENTUS \(12º\)  1x3  A\.S\.F\. MAGNUS \(24º\)/);
+  assert.match(out, /✅/); // MAGNUS venceu 3x1
+});
+
+test('formatLastGame: mandante — time à esquerda com placar mapeado', () => {
+  const out = formatLastGame(
+    { date: '05/07', opponent: 'JUVENTUS', isHome: true, targetScore: 3, opponentScore: 1, opponentPosition: 12, targetPosition: 24 },
+    'A.S.F. MAGNUS'
+  );
+  assert.match(out, /05\/07 \(mandante\)/);
+  assert.match(out, /A\.S\.F\. MAGNUS \(24º\)  3x1  JUVENTUS \(12º\)/);
+  assert.match(out, /✅/);
+});
+
+test('formatLastGame: derrota mostra ❌', () => {
+  const out = formatLastGame(
+    { date: '05/07', opponent: 'TIME A', isHome: true, targetScore: 0, opponentScore: 2 },
+    'MAGNUS'
+  );
+  assert.match(out, /❌/);
+});
+
+test('formatLastGame: empate mostra ➖', () => {
+  const out = formatLastGame(
+    { date: '05/07', opponent: 'TIME A', isHome: false, targetScore: 2, opponentScore: 2 },
+    'MAGNUS'
+  );
+  assert.match(out, /➖/);
+});
+
+test('formatLastGame: omite parênteses de posição quando ausente', () => {
+  const out = formatLastGame(
+    { date: '05/07', opponent: 'TIME A', isHome: true, targetScore: 1, opponentScore: 0 },
+    'MAGNUS'
+  );
+  assert.doesNotMatch(out, /\(\d+º\)/);
 });

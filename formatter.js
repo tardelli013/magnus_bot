@@ -111,6 +111,29 @@ function formatNextGame(nextGame, teamLabel) {
   return lines.join('\n');
 }
 
+function resultEmoji(targetScore, opponentScore) {
+  if (targetScore > opponentScore) return '✅';
+  if (targetScore < opponentScore) return '❌';
+  return '➖';
+}
+
+function formatLastGame(lastGame, teamLabel) {
+  if (!lastGame) {
+    return '🏁 *ÚLTIMO JOGO*\n_⚠️ Sem jogo anterior._';
+  }
+  const opponent = withPosition(truncate(shortClub(lastGame.opponent), 34), lastGame.opponentPosition);
+  const team = withPosition(teamLabel, lastGame.targetPosition);
+  const mando = lastGame.isHome ? 'mandante' : 'visitante';
+  const emoji = resultEmoji(lastGame.targetScore, lastGame.opponentScore);
+  const matchup = lastGame.isHome
+    ? `${team}  ${lastGame.targetScore}x${lastGame.opponentScore}  ${opponent}`
+    : `${opponent}  ${lastGame.opponentScore}x${lastGame.targetScore}  ${team}`;
+  const lines = ['🏁 *ÚLTIMO JOGO*'];
+  lines.push(`${lastGame.date} (${mando})`);
+  lines.push(`${matchup}  ${emoji}`);
+  return lines.join('\n');
+}
+
 function formatTeamLabel(targetTeam) {
   return shortClub(targetTeam).toUpperCase();
 }
@@ -118,7 +141,7 @@ function formatTeamLabel(targetTeam) {
 function buildReportParts(payload, opts = {}) {
   const { targetTeam = 'TIME ALVO', displayName, stale = false } = opts;
   const teamLabel = (displayName || formatTeamLabel(targetTeam)).toUpperCase();
-  const { source, classification, targetIndex, topClassification, teamScorers, topScorers, nextGame, scrapedAt, warnings = [] } = payload;
+  const { source, classification, targetIndex, topClassification, teamScorers, topScorers, nextGame, lastGame, scrapedAt, warnings = [] } = payload;
 
   const parts = [];
 
@@ -140,6 +163,7 @@ function buildReportParts(payload, opts = {}) {
     parts.push({ type: 'text', text: '⚠️ Classificação indisponível.' });
   }
 
+  parts.push({ type: 'text', text: formatLastGame(lastGame, teamLabel) });
   parts.push({ type: 'text', text: formatNextGame(nextGame, teamLabel) });
   parts.push({ type: 'text', text: formatTeamScorers(teamScorers, teamLabel) });
 
@@ -169,4 +193,4 @@ function format(payload, opts = {}) {
     .join('\n\n');
 }
 
-module.exports = { format, buildReportParts, buildTableModel, renderTableText, formatNextGame, shortClub, truncate, pad };
+module.exports = { format, buildReportParts, buildTableModel, renderTableText, formatNextGame, formatLastGame, shortClub, truncate, pad };
