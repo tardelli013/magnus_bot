@@ -7,10 +7,12 @@ const { scrape } = require('./scraper');
 const { format } = require('./formatter');
 const path = require('path');
 const { renderReport, saveImage } = require('./image-renderer');
+const telegram = require('./src/telegram');
 
 const FLAGS = {
   fromCache: process.argv.includes('--from-cache'),
   noScorers: process.argv.includes('--no-scorers'),
+  noSend: process.argv.includes('--no-send'),
   help: process.argv.includes('--help') || process.argv.includes('-h'),
 };
 
@@ -22,6 +24,7 @@ Uso:
   node enviar.js                  scrape + formata + gera imagem em generated-images/
   node enviar.js --from-cache     usa data/last-run.json (não bate no site)
   node enviar.js --no-scorers     pula artilharia
+  node enviar.js --no-send        gera a imagem mas não envia ao Telegram
   node enviar.js --help           esta ajuda
 
 Variáveis de ambiente (.env):
@@ -30,6 +33,8 @@ Variáveis de ambiente (.env):
   EVENT_URL            URL base do evento
   ALLOW_STALE_CACHE    true para usar cache antigo em caso de falha do scrape
   DEBUG                true para logs DEBUG
+  TELEGRAM_BOT_TOKEN   token do bot (@BotFather); com ele + CHAT_ID a imagem é enviada
+  TELEGRAM_CHAT_ID     canal de destino: @usuariodocanal ou id numérico -100...
 `.trim());
 }
 
@@ -87,6 +92,15 @@ async function main() {
 
   console.log(`\n${message}\n`);
   logger.info(`imagem salva: ${imagePath}`);
+
+  if (FLAGS.noSend) {
+    logger.info('envio ao Telegram desabilitado (--no-send)');
+  } else if (!telegram.isConfigured()) {
+    logger.warn('Telegram não configurado (TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID); pulando envio');
+  } else {
+    await telegram.sendPhoto(imagePath);
+    logger.info('imagem enviada ao Telegram');
+  }
 }
 
 main().catch((err) => {
