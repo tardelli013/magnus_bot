@@ -24,6 +24,9 @@ jobs:
       TARGET_TEAM: ASSOCIAÇÃO SOROCABANA DE FUTSAL
       TARGET_TEAM_DISPLAY: A.S.F. MAGNUS
       EVENT_URL: https://eventos.admfutsal.com.br/evento/908
+      # Segredos do Telegram (Settings → Secrets and variables → Actions).
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +52,9 @@ jobs:
         run: node enviar.js
 
       - name: Commita a imagem no repo
+        # Roda mesmo se "Gera a imagem" falhar no envio ao Telegram, pra imagem
+        # do dia ser commitada; o job ainda termina vermelho por causa da falha.
+        if: ${{ !cancelled() }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

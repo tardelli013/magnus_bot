@@ -84,6 +84,36 @@ Crie `~/Library/LaunchAgents/com.magnus.bot.plist` com a configuração desejada
 ### Windows — Task Scheduler
 Crie uma tarefa que execute `node enviar.js` no diretório do projeto no horário desejado.
 
+## Telegram
+
+Depois de gerar a imagem, o bot a envia para um canal do Telegram (`sendPhoto`).
+É **opcional**: sem as variáveis configuradas, o envio é pulado com um aviso.
+
+### Setup (uma vez)
+
+1. No Telegram, fale com o **@BotFather** → `/newbot` → siga os passos → copie o
+   **token** (formato `123456:ABC-...`).
+2. Crie o **canal** e adicione o seu bot como **administrador** (Manage Channel →
+   Administrators → Add Admin → busque pelo @username do bot).
+3. Descubra o `chat_id` do canal:
+   - Canal **público**: use `@nomedocanal`.
+   - Canal **privado**: encaminhe uma mensagem do canal para o **@userinfobot** (ou
+     adicione o **@RawDataBot** ao canal temporariamente) e pegue o id numérico
+     `-100xxxxxxxxxx`.
+
+### Configuração
+
+- **Local:** preencha `TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID` no `.env`.
+- **GitHub Actions:** crie os dois como **Secrets** em
+  *Settings → Secrets and variables → Actions*. O workflow já os injeta.
+
+### Comportamento
+
+- Envia **só a imagem**, sem legenda.
+- Se o envio falhar (token errado, rede), a execução termina com erro (Action fica
+  vermelha). A imagem do dia ainda é commitada no repo.
+- `node enviar.js --no-send` gera a imagem sem enviar (útil para testar local).
+
 ## Estrutura
 
 ```
