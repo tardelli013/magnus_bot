@@ -101,7 +101,7 @@ Depois de gerar a imagem, o bot a envia para um canal do Telegram (`sendPhoto`).
      adicione o **@RawDataBot** ao canal temporariamente) e pegue o id numérico
      `-100xxxxxxxxxx`.
 
-### Configuração
+### Configuração (Telegram)
 
 - **Local:** preencha `TELEGRAM_BOT_TOKEN` e `TELEGRAM_CHAT_ID` no `.env`.
 - **GitHub Actions:** crie os dois como **Secrets** em

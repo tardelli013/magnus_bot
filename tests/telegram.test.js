@@ -67,3 +67,12 @@ test('sendPhoto: lança quando a API responde ok:false / HTTP 4xx', async (t) =>
   }));
   await assert.rejects(() => telegram.sendPhoto(pngPath), /400.*chat not found/);
 });
+
+test('sendPhoto: lança quando a API responde HTTP 200 com ok:false', async (t) => {
+  setEnv(t, 'TESTTOKEN', '@canal');
+  t.mock.method(globalThis, 'fetch', async () => ({
+    ok: true, status: 200, statusText: 'OK',
+    json: async () => ({ ok: false, description: 'chat not found' }),
+  }));
+  await assert.rejects(() => telegram.sendPhoto(pngPath), /200.*chat not found/);
+});
