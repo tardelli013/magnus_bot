@@ -233,16 +233,10 @@ async function renderReport(payload, opts = {}) {
   return canvas.toBuffer('image/png', { compressionLevel: 0 });
 }
 
-function timestamp(d = new Date()) {
-  const p = (n) => String(n).padStart(2, '0');
-  // hora local (respeita TZ do ambiente, ex.: TZ=America/Sao_Paulo no CI)
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
-}
-
 async function saveImage(buffer, dir) {
+  // Nome fixo: guardamos só a última classificação, sobrescrita a cada execução.
   fs.mkdirSync(dir, { recursive: true });
-  const filename = `classificacao-${timestamp()}.png`;
-  const filepath = path.join(dir, filename);
+  const filepath = path.join(dir, 'classificacao.png');
   fs.writeFileSync(filepath, buffer);
   return filepath;
 }

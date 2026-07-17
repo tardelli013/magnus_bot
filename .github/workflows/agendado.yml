@@ -18,7 +18,7 @@ jobs:
   gerar:
     runs-on: ubuntu-latest
     env:
-      # Fuso pra data/hora do nome do arquivo sair em BRT.
+      # Fuso pra data/hora da mensagem de commit sair em BRT.
       TZ: America/Sao_Paulo
       # Config não-sensível do bot (edite à vontade).
       TARGET_TEAM: ASSOCIAÇÃO SOROCABANA DE FUTSAL
@@ -59,15 +59,16 @@ jobs:
           fi
           git commit -m "chore: imagem diária $(date '+%Y-%m-%d %H:%M')"
           # O remoto pode ter avançado (push externo ou outro run) entre o
-          # checkout e o push. Como a imagem tem nome único, rebaseamos sobre
-          # o remoto e tentamos de novo — nunca há conflito de conteúdo.
+          # checkout e o push. Agora a imagem tem nome fixo (classificacao.png),
+          # então rebaseamos com -X theirs: se houver conflito no PNG, a imagem
+          # recém-gerada (a mais recente) sempre vence.
           for tentativa in 1 2 3 4 5; do
             if git push origin HEAD:main; then
               echo "Push OK na tentativa $tentativa."
               exit 0
             fi
             echo "Push rejeitado; rebase sobre origin/main e nova tentativa ($tentativa)..."
-            git pull --rebase origin main
+            git pull --rebase -X theirs origin main
           done
           echo "Falha ao empurrar a imagem após 5 tentativas." >&2
           exit 1

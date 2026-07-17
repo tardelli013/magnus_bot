@@ -2,7 +2,7 @@
 
 Gera uma **imagem PNG** com a classificação, o próximo jogo e a artilharia do **Campeonato Paulista de Futsal Sub-7, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
-A imagem é salva em `generated-images/` a cada execução e inclui:
+A imagem é salva em `generated-images/classificacao.png` (nome fixo, sobrescrito a cada execução — mantemos só a última versão) e inclui:
 - **Classificação parcial** em grid: posição do time alvo, **até 5 acima** e **até 3 abaixo**, com a linha do time **destacada** e coluna de saldo de gols (SG).
 - **Próximo jogo** do time alvo: data, hora, mando (mandante/visitante), adversário e ginásio.
 - Artilheiros do time alvo.
@@ -67,7 +67,7 @@ npm test           # roda todos os testes (node --test)
 
 ### GitHub Actions (roda na nuvem, todo dia às 20:00 BRT)
 
-O workflow `.github/workflows/agendado.yml` roda automaticamente no GitHub: gera a imagem e **commita o PNG em `generated-images/`** no próprio repositório. Os arquivos saem como `classificacao-YYYY-MM-DD-HHMM.png` (data + hora da execução, em BRT). Dá pra disparar na mão em **Actions → "Gera imagem diária" → Run workflow**.
+O workflow `.github/workflows/agendado.yml` roda automaticamente no GitHub: gera a imagem e **commita o PNG em `generated-images/classificacao.png`** no próprio repositório. É sempre o mesmo arquivo (nome fixo), **sobrescrito a cada execução** — o repo guarda só a última classificação. Dá pra disparar na mão em **Actions → "Gera imagem diária" → Run workflow**.
 
 Pra mudar o horário, edite a linha `cron: '0 23 * * *'` no workflow (em UTC — `0 23` = 20:00 BRT).
 
@@ -106,7 +106,7 @@ magnus_bot/
 │   ├── table.test.js            # testes do modelo de tabela/grid
 │   ├── formatter.test.js        # testes do shortClub
 │   └── image-renderer.test.js   # testes do renderer PNG (renderToImage + renderReport)
-├── generated-images/            # PNGs gerados a cada execução (gitignored)
+├── generated-images/            # classificacao.png (nome fixo, sobrescrito e commitado a cada execução)
 ├── data/last-run.json           # cache do último scrape (gitignored)
 ├── debug/                       # HTMLs salvos quando parser falha (gitignored)
 ├── .env.example
@@ -132,6 +132,6 @@ magnus_bot/
 3. Mesma coisa para `/artilharia` e `/jogos` — desta última sai o **próximo jogo** (primeiro jogo ainda não disputado do time, a partir da data atual).
 4. `formatter.js` monta um **modelo de relatório** (`buildReportParts`) compartilhado entre texto e imagem: seções de texto + grids de classificação (`buildTableModel`).
 5. `image-renderer.js` (`renderReport`) desenha o PNG com `node-canvas` (fundo escuro, 720px), renderizando a classificação como **grid de verdade** — cabeçalho, zebra, linha do time destacada e coluna SG. O `format()` reaproveita o mesmo modelo para a versão em texto (preview no console).
-6. A imagem é salva em `generated-images/`.
+6. A imagem é salva em `generated-images/classificacao.png` (nome fixo, sobrescrevendo a versão anterior).
 
 O scrape é cacheado em `data/last-run.json` a cada sucesso, permitindo `--from-cache` e fallback automático (com `ALLOW_STALE_CACHE=true`).
