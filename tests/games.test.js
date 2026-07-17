@@ -5,7 +5,7 @@ const path = require('path');
 
 const { parseGames } = require('../src/parser');
 const { selectNextGame, selectLastGame } = require('../scraper');
-const { formatNextGame, formatLastGame } = require('../formatter');
+const { formatNextGame, formatLastGame, buildReportParts } = require('../formatter');
 
 const SAMPLES = path.join(__dirname, '..', 'samples');
 const gamesHtml = fs.readFileSync(path.join(SAMPLES, 'games.html'), 'utf8');
@@ -186,10 +186,11 @@ test('selectLastGame: escolhe o jogo disputado mais recente (fixture real)', () 
   const games = parseGames(gamesHtml);
   const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 11, 31) });
   assert.equal(sel.found, true);
-  assert.equal(typeof sel.game.targetScore, 'number');
-  assert.equal(typeof sel.game.opponentScore, 'number');
-  assert.ok(sel.game.opponent);
-  assert.equal(typeof sel.game.isHome, 'boolean');
+  assert.equal(sel.game.date, '21/06');
+  assert.match(sel.game.opponent, /OSASCO/);
+  assert.equal(sel.game.isHome, true);
+  assert.equal(sel.game.targetScore, 1);
+  assert.equal(sel.game.opponentScore, 1);
 });
 
 test('selectLastGame: ignora jogos futuros e pega o disputado mais recente', () => {
@@ -288,4 +289,25 @@ test('formatLastGame: omite parênteses de posição quando ausente', () => {
     'MAGNUS'
   );
   assert.doesNotMatch(out, /\(\d+º\)/);
+});
+
+test('buildReportParts: seção ÚLTIMO JOGO deve vir antes de PRÓXIMO JOGO', () => {
+  const payload = {
+    source: { category: 'Sub-7', division: 'A1', season: '2026' },
+    scrapedAt: '2026-07-05T12:00:00Z',
+    classification: [],
+    topClassification: [],
+    teamScorers: [],
+    topScorers: [],
+    warnings: [],
+    lastGame: { date: '05/07', opponent: 'TIME A', isHome: true, targetScore: 2, opponentScore: 1, targetPosition: 24, opponentPosition: 12 },
+    nextGame: { date: '12/07', time: '10:00', venue: 'GINÁSIO X', opponent: 'TIME B', isHome: false, targetPosition: 24, opponentPosition: 10 },
+  };
+  const opts = { targetTeam: 'MAGNUS', displayName: 'MAGNUS' };
+  const parts = buildReportParts(payload, opts);
+
+  const idxLast = parts.findIndex((p) => p.type === 'text' && /ÚLTIMO JOGO/.test(p.text));
+  const idxNext = parts.findIndex((p) => p.type === 'text' && /PRÓXIMO JOGO/.test(p.text));
+  assert.ok(idxLast !== -1 && idxNext !== -1, 'ambas as seções presentes');
+  assert.ok(idxLast < idxNext, 'último jogo deve vir antes do próximo jogo');
 });
