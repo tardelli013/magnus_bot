@@ -1,110 +1,165 @@
 #!/usr/bin/env node
 require('dotenv').config();
 
+const path = require('path');
 const logger = require('./src/logger');
 const cache = require('./src/cache');
+const { CATEGORIES } = require('./src/categories');
 const { scrape } = require('./scraper');
-const { format } = require('./formatter');
-const path = require('path');
+const { format, formatTelegramCaption } = require('./formatter');
 const { renderReport, saveImage } = require('./image-renderer');
 const telegram = require('./src/telegram');
 
-const FLAGS = {
-  fromCache: process.argv.includes('--from-cache'),
-  noScorers: process.argv.includes('--no-scorers'),
-  noSend: process.argv.includes('--no-send'),
-  help: process.argv.includes('--help') || process.argv.includes('-h'),
-};
+function parseFlags(argv = process.argv.slice(2)) {
+  return {
+    fromCache: argv.includes('--from-cache'),
+    noScorers: argv.includes('--no-scorers'),
+    noSend: argv.includes('--no-send'),
+    help: argv.includes('--help') || argv.includes('-h'),
+  };
+}
 
 function printHelp() {
   console.log(`
-magnus-bot — gera a imagem da classificação do campeonato de futsal ADM (Sub-7 A1)
+magnus-bot — gera imagens das categorias Sub-7, Sub-8, Sub-9 e Sub-10
 
 Uso:
-  node enviar.js                  scrape + formata + gera imagem em generated-images/
-  node enviar.js --from-cache     usa data/last-run.json (não bate no site)
-  node enviar.js --no-scorers     pula artilharia
-  node enviar.js --no-send        gera a imagem mas não envia ao Telegram
+  node enviar.js                  scrape + gera + envia as quatro imagens
+  node enviar.js --from-cache     usa os caches de cada categoria (sem acessar o site)
+  node enviar.js --no-scorers     pula artilharia nas quatro categorias
+  node enviar.js --no-send        gera as imagens mas não envia ao Telegram
   node enviar.js --help           esta ajuda
 
 Variáveis de ambiente (.env):
   TARGET_TEAM          nome do time alvo
-  TARGET_TEAM_DISPLAY  nome amigável exibido na imagem
-  EVENT_URL            URL base do evento
-  ALLOW_STALE_CACHE    true para usar cache antigo em caso de falha do scrape
+  TARGET_TEAM_DISPLAY  nome amigável exibido nas imagens
+  ALLOW_STALE_CACHE    true para fallback por categoria com cache de até 24h
   DEBUG                true para logs DEBUG
-  TELEGRAM_BOT_TOKEN   token do bot (@BotFather); com ele + CHAT_ID a imagem é enviada
-  TELEGRAM_CHAT_ID     canal de destino: @usuariodocanal ou id numérico -100...
+  HTTP_TIMEOUT_MS      timeout HTTP em milissegundos
+  TELEGRAM_BOT_TOKEN   token do bot (@BotFather)
+  TELEGRAM_CHAT_ID     canal de destino: @canal ou id numérico -100...
 `.trim());
 }
 
 function requireEnv(name) {
-  const v = process.env[name];
-  if (!v) throw new Error(`variável de ambiente obrigatória ausente: ${name}`);
-  return v;
+  const value = process.env[name];
+  if (!value) throw new Error(`variável de ambiente obrigatória ausente: ${name}`);
+  return value;
 }
 
-async function obtainPayload() {
-  const eventUrl = process.env.EVENT_URL || 'https://eventos.admfutsal.com.br/evento/908';
-  const targetTeam = requireEnv('TARGET_TEAM');
-
-  if (FLAGS.fromCache) {
-    const cached = cache.load();
-    if (!cached) throw new Error('--from-cache: nenhum cache encontrado em data/last-run.json');
-    logger.info(`usando cache (idade: ${cache.ageHours(cached).toFixed(1)}h)`);
-    return { payload: cached, stale: false };
+async function obtainPayload(category, targetTeam, flags) {
+  if (flags.fromCache) {
+    const cached = cache.load(category.slug);
+    if (!cached) throw new Error(`nenhum cache encontrado para ${category.label}`);
+    logger.info(`${category.label}: usando cache (idade: ${cache.ageHours(cached).toFixed(1)}h)`);
+    return { payload: cached, stale: false, cacheAgeHours: cache.ageHours(cached) };
   }
 
   try {
     const payload = await scrape({
-      eventUrl,
+      eventUrl: category.eventUrl,
       targetTeam,
-      includeScorers: !FLAGS.noScorers,
+      category: category.label,
+      division: category.division,
+      season: category.season,
+      includeScorers: !flags.noScorers,
     });
-    cache.save(payload);
-    return { payload, stale: false };
+    cache.save(category.slug, payload);
+    return { payload, stale: false, cacheAgeHours: null };
   } catch (err) {
-    logger.error(`scrape falhou: ${err.message}`);
+    logger.error(`${category.label}: scrape falhou: ${err.message}`);
     if (process.env.ALLOW_STALE_CACHE === 'true') {
-      const cached = cache.load();
-      if (cached && cache.ageHours(cached) < 24) {
-        logger.warn(`usando cache antigo como fallback (idade: ${cache.ageHours(cached).toFixed(1)}h)`);
-        return { payload: cached, stale: true };
+      const cached = cache.load(category.slug);
+      const age = cache.ageHours(cached);
+      if (cached && age < 24) {
+        logger.warn(`${category.label}: usando cache antigo como fallback (idade: ${age.toFixed(1)}h)`);
+        return { payload: cached, stale: true, cacheAgeHours: age };
       }
     }
     throw err;
   }
 }
 
-async function main() {
-  if (FLAGS.help) {
+async function processCategory(category, context) {
+  const { targetTeam, displayName, flags, outputDir } = context;
+  logger.info(`${category.label}: iniciando processamento (${category.eventUrl})`);
+
+  let obtained;
+  try {
+    obtained = await obtainPayload(category, targetTeam, flags);
+    const message = format(obtained.payload, { targetTeam, displayName, stale: obtained.stale });
+    const buffer = await renderReport(obtained.payload, { targetTeam, displayName, stale: obtained.stale });
+    const imagePath = await saveImage(buffer, outputDir, category.slug);
+
+    console.log(`\n${message}\n`);
+    logger.info(`${category.label}: imagem salva: ${imagePath}`);
+
+    if (flags.noSend) {
+      logger.info(`${category.label}: envio ao Telegram desabilitado (--no-send)`);
+    } else if (!telegram.isConfigured()) {
+      logger.warn(`${category.label}: Telegram não configurado; pulando envio`);
+    } else {
+      try {
+        await telegram.sendPhoto(imagePath, { caption: formatTelegramCaption(obtained.payload) });
+        logger.info(`${category.label}: imagem enviada ao Telegram`);
+      } catch (err) {
+        return { category, status: 'send_failed', imagePath, error: err };
+      }
+    }
+
+    return {
+      category,
+      status: obtained.stale ? 'stale' : 'success',
+      imagePath,
+      cacheAgeHours: obtained.cacheAgeHours,
+    };
+  } catch (err) {
+    return { category, status: 'failed', error: err };
+  }
+}
+
+function printSummary(results) {
+  console.log('\nResumo da execução:');
+  for (const result of results) {
+    let detail;
+    if (result.status === 'success') detail = 'OK';
+    else if (result.status === 'stale') detail = `OK (cache de ${result.cacheAgeHours.toFixed(1)}h)`;
+    else if (result.status === 'send_failed') detail = `ERRO NO ENVIO: ${result.error.message}`;
+    else detail = `ERRO: ${result.error.message}`;
+    console.log(`${result.category.label.padEnd(6)} ${detail}`);
+  }
+}
+
+async function main(argv = process.argv.slice(2)) {
+  const flags = parseFlags(argv);
+  if (flags.help) {
     printHelp();
-    return;
+    return [];
   }
 
   const targetTeam = requireEnv('TARGET_TEAM');
   const displayName = process.env.TARGET_TEAM_DISPLAY || targetTeam;
+  const outputDir = path.join(__dirname, 'generated-images');
+  const results = [];
 
-  const { payload, stale } = await obtainPayload();
-  const message = format(payload, { targetTeam, displayName, stale });
-  const buffer = await renderReport(payload, { targetTeam, displayName, stale });
-  const imagePath = await saveImage(buffer, path.join(__dirname, 'generated-images'));
-
-  console.log(`\n${message}\n`);
-  logger.info(`imagem salva: ${imagePath}`);
-
-  if (FLAGS.noSend) {
-    logger.info('envio ao Telegram desabilitado (--no-send)');
-  } else if (!telegram.isConfigured()) {
-    logger.warn('Telegram não configurado (TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID); pulando envio');
-  } else {
-    await telegram.sendPhoto(imagePath);
-    logger.info('imagem enviada ao Telegram');
+  for (const category of CATEGORIES) {
+    results.push(await processCategory(category, { targetTeam, displayName, flags, outputDir }));
   }
+
+  printSummary(results);
+  const failures = results.filter((result) => result.status === 'failed' || result.status === 'send_failed');
+  if (failures.length) {
+    throw new Error(`${failures.length} categoria(s) terminaram com erro`);
+  }
+  return results;
 }
 
-main().catch((err) => {
-  logger.error(err.message);
-  if (process.env.DEBUG === 'true') console.error(err.stack);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    logger.error(err.message);
+    if (process.env.DEBUG === 'true') console.error(err.stack);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { main, parseFlags, obtainPayload, processCategory, printSummary };

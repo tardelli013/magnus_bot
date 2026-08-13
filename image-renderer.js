@@ -2,6 +2,7 @@ const { createCanvas } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 const { buildReportParts } = require('./formatter');
+const { imageFilename } = require('./src/categories');
 
 const WIDTH = 720;
 const PADDING = 32;
@@ -233,10 +234,9 @@ async function renderReport(payload, opts = {}) {
   return canvas.toBuffer('image/png', { compressionLevel: 0 });
 }
 
-async function saveImage(buffer, dir) {
-  // Nome fixo: guardamos só a última classificação, sobrescrita a cada execução.
+async function saveImage(buffer, dir, categorySlug) {
   fs.mkdirSync(dir, { recursive: true });
-  const filepath = path.join(dir, 'classificacao.png');
+  const filepath = path.join(dir, imageFilename(categorySlug));
   fs.writeFileSync(filepath, buffer);
   return filepath;
 }

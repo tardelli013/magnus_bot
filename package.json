@@ -1,7 +1,7 @@
 {
   "name": "magnus-bot",
   "version": "1.0.0",
-  "description": "Gera imagem PNG com classificação, próximo jogo e artilharia do campeonato de futsal ADM (Sub-7 Divisão A1).",
+  "description": "Gera imagens PNG com classificação, jogos e artilharia das categorias Sub-7 a Sub-10 do futsal ADM.",
   "main": "enviar.js",
   "type": "commonjs",
   "engines": {

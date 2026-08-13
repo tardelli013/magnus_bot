@@ -9,7 +9,7 @@ function isConfigured() {
 
 async function sendPhoto(
   filePath,
-  { token = process.env.TELEGRAM_BOT_TOKEN, chatId = process.env.TELEGRAM_CHAT_ID } = {},
+  { token = process.env.TELEGRAM_BOT_TOKEN, chatId = process.env.TELEGRAM_CHAT_ID, caption } = {},
 ) {
   if (!token || !chatId) {
     throw new Error('Telegram não configurado: defina TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID');
@@ -18,6 +18,7 @@ async function sendPhoto(
   const buffer = fs.readFileSync(filePath);
   const form = new FormData();
   form.append('chat_id', chatId);
+  if (caption) form.append('caption', caption);
   form.append('photo', new Blob([buffer], { type: 'image/png' }), path.basename(filePath));
 
   const timeoutMs = Number(process.env.HTTP_TIMEOUT_MS || 15000);

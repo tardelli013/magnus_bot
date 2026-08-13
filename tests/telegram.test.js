@@ -59,6 +59,19 @@ test('sendPhoto: sucesso quando a API responde ok:true', async (t) => {
   assert.equal(captured.opts.body.get('chat_id'), '@canal');
 });
 
+test('sendPhoto: inclui legenda no mesmo post da imagem', async (t) => {
+  setEnv(t, 'TESTTOKEN', '@canal');
+  let form;
+  t.mock.method(globalThis, 'fetch', async (_url, opts) => {
+    form = opts.body;
+    return { ok: true, status: 200, statusText: 'OK', json: async () => ({ ok: true, result: {} }) };
+  });
+
+  await telegram.sendPhoto(pngPath, { caption: 'Sub-7 Divisão A1, atualizado em 12/08/2026 23:56' });
+
+  assert.equal(form.get('caption'), 'Sub-7 Divisão A1, atualizado em 12/08/2026 23:56');
+});
+
 test('sendPhoto: lança quando a API responde ok:false / HTTP 4xx', async (t) => {
   setEnv(t, 'TESTTOKEN', '@canal');
   t.mock.method(globalThis, 'fetch', async () => ({
