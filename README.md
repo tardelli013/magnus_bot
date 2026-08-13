@@ -2,6 +2,8 @@
 
 Gera **quatro imagens PNG** com a classificação, os jogos e a artilharia do **Campeonato Paulista de Futsal Sub-7, Sub-8, Sub-9 e Sub-10, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
+URL do channel -> https://t.me/bot_magnus
+
 As imagens são salvas como `generated-images/classificacao-sub7.png` até `classificacao-sub10.png`. Cada arquivo tem nome fixo e é sobrescrito somente por uma nova execução da mesma categoria. Cada relatório inclui:
 - **Classificação parcial** em grid: posição do time alvo, **até 5 acima** e **até 3 abaixo**, com a linha do time **destacada** e coluna de saldo de gols (SG).
 - **Próximo jogo** do time alvo: data, hora, mando (mandante/visitante), adversário e ginásio.
