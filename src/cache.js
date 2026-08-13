@@ -3,23 +3,36 @@ const path = require('path');
 const logger = require('./logger');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
-const CACHE_FILE = path.join(DATA_DIR, 'last-run.json');
+const { getCategory } = require('./categories');
 
-function ensureDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+function cacheFile(slug, dataDir = DATA_DIR) {
+  if (!getCategory(slug)) throw new Error(`cache: categoria inválida: ${slug}`);
+  return path.join(dataDir, `last-run-${slug}.json`);
 }
 
-function save(payload) {
-  ensureDir();
-  fs.writeFileSync(CACHE_FILE, JSON.stringify(payload, null, 2));
-  logger.debug(`cache salvo em ${CACHE_FILE}`);
+function ensureDir(dataDir) {
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 }
 
-function load() {
-  if (!fs.existsSync(CACHE_FILE)) return null;
+function save(slug, payload, { dataDir = DATA_DIR } = {}) {
+  ensureDir(dataDir);
+  const file = cacheFile(slug, dataDir);
+  fs.writeFileSync(file, JSON.stringify(payload, null, 2));
+  logger.debug(`cache salvo em ${file}`);
+}
+
+function load(slug, { dataDir = DATA_DIR } = {}) {
+  const file = cacheFile(slug, dataDir);
+  if (!fs.existsSync(file)) return null;
   try {
-    const raw = fs.readFileSync(CACHE_FILE, 'utf8');
-    return JSON.parse(raw);
+    const raw = fs.readFileSync(file, 'utf8');
+    const payload = JSON.parse(raw);
+    const expected = getCategory(slug);
+    if (payload?.source?.category !== expected.label) {
+      logger.warn(`cache de ${slug} pertence a outra categoria`);
+      return null;
+    }
+    return payload;
   } catch (err) {
     logger.warn(`falha ao ler cache: ${err.message}`);
     return null;
@@ -32,4 +45,4 @@ function ageHours(payload) {
   return diffMs / 1000 / 3600;
 }
 
-module.exports = { save, load, ageHours, CACHE_FILE };
+module.exports = { save, load, ageHours, cacheFile, DATA_DIR };

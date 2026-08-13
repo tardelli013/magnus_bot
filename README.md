@@ -1,8 +1,8 @@
 # magnus-bot
 
-Gera uma **imagem PNG** com a classificação, o próximo jogo e a artilharia do **Campeonato Paulista de Futsal Sub-7, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
+Gera **quatro imagens PNG** com a classificação, os jogos e a artilharia do **Campeonato Paulista de Futsal Sub-7, Sub-8, Sub-9 e Sub-10, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
-A imagem é salva em `generated-images/classificacao.png` (nome fixo, sobrescrito a cada execução — mantemos só a última versão) e inclui:
+As imagens são salvas como `generated-images/classificacao-sub7.png` até `classificacao-sub10.png`. Cada arquivo tem nome fixo e é sobrescrito somente por uma nova execução da mesma categoria. Cada relatório inclui:
 - **Classificação parcial** em grid: posição do time alvo, **até 5 acima** e **até 3 abaixo**, com a linha do time **destacada** e coluna de saldo de gols (SG).
 - **Próximo jogo** do time alvo: data, hora, mando (mandante/visitante), adversário e ginásio.
 - Artilheiros do time alvo.
@@ -34,21 +34,20 @@ Variáveis em `.env`:
 |---|---|---|
 | `TARGET_TEAM` | sim | Nome do time alvo para casar com o HTML do site (case/accent-insensitive). Default sugerido: `ASSOCIAÇÃO SOROCABANA DE FUTSAL` |
 | `TARGET_TEAM_DISPLAY` | opcional | Nome amigável exibido na imagem (ex.: `A.S.F. MAGNUS`). Default: mesmo de `TARGET_TEAM` |
-| `EVENT_URL` | opcional | URL do evento. Default: `https://eventos.admfutsal.com.br/evento/908` |
-| `ALLOW_STALE_CACHE` | opcional | `true` permite usar cache de até 24h se o scrape do dia falhar |
+| `ALLOW_STALE_CACHE` | opcional | `true` permite usar o cache de até 24h de cada categoria se o scrape falhar |
 | `DEBUG` | opcional | `true` ativa logs DEBUG |
 | `HTTP_TIMEOUT_MS` | opcional | Default 15000 |
 
 ## Uso
 
 ```bash
-# Scrape + formata + gera a imagem em generated-images/:
+# Scrape + formata + gera e envia as quatro imagens:
 node enviar.js
 
-# Reutiliza o último scrape em cache, sem bater no site:
+# Reutiliza o último scrape de cada categoria, sem acessar o site:
 node enviar.js --from-cache
 
-# Pula a artilharia (mais rápido):
+# Pula a artilharia nas quatro categorias (mais rápido):
 node enviar.js --no-scorers
 
 # Ajuda:
@@ -58,8 +57,8 @@ node enviar.js --help
 ### Atalhos npm
 
 ```bash
-npm start          # gera a imagem (mesma coisa que node enviar.js)
-npm run cache      # gera a imagem a partir do cache
+npm start          # gera as quatro imagens (mesma coisa que node enviar.js)
+npm run cache      # gera as quatro imagens a partir dos caches
 npm test           # roda todos os testes (node --test)
 ```
 
@@ -67,7 +66,7 @@ npm test           # roda todos os testes (node --test)
 
 ### GitHub Actions (roda na nuvem, todo dia às 20:00 BRT)
 
-O workflow `.github/workflows/agendado.yml` roda automaticamente no GitHub: gera a imagem e **commita o PNG em `generated-images/classificacao.png`** no próprio repositório. É sempre o mesmo arquivo (nome fixo), **sobrescrito a cada execução** — o repo guarda só a última classificação. Dá pra disparar na mão em **Actions → "Gera imagem diária" → Run workflow**.
+O workflow `.github/workflows/agendado.yml` roda automaticamente no GitHub: gera as quatro imagens e commita os PNGs em `generated-images/`. Cada categoria mantém apenas sua versão mais recente. Dá para disparar manualmente em **Actions → "Gera imagens diárias" → Run workflow**.
 
 Pra mudar o horário, edite a linha `cron: '0 23 * * *'` no workflow (em UTC — `0 23` = 20:00 BRT).
 
@@ -86,7 +85,7 @@ Crie uma tarefa que execute `node enviar.js` no diretório do projeto no horári
 
 ## Telegram
 
-Depois de gerar a imagem, o bot a envia para um canal do Telegram (`sendPhoto`).
+Depois de gerar as imagens, o bot envia cada uma delas para um canal do Telegram (`sendPhoto`), em quatro mensagens independentes.
 É **opcional**: sem as variáveis configuradas, o envio é pulado com um aviso.
 
 ### Setup (uma vez)
@@ -109,25 +108,26 @@ Depois de gerar a imagem, o bot a envia para um canal do Telegram (`sendPhoto`).
 
 ### Comportamento
 
-- Envia **só a imagem**, sem legenda.
-- Se o envio falhar (token errado, rede), a execução termina com erro (Action fica
-  vermelha). A imagem do dia ainda é commitada no repo.
-- `node enviar.js --no-send` gera a imagem sem enviar (útil para testar local).
+- Envia cada imagem com uma legenda no formato `Sub-7 Divisão A1, atualizado em DD/MM/AAAA HH:mm`.
+- Uma falha não impede o processamento das categorias seguintes, mas a execução termina com erro.
+- As imagens geradas com sucesso ainda são commitadas pelo workflow.
+- `node enviar.js --no-send` gera as quatro imagens sem enviar (útil para testar local).
 
 ## Estrutura
 
 ```
 magnus_bot/
-├── .github/workflows/agendado.yml  # cron diário (GitHub): gera + commita a imagem
-├── enviar.js                    # entry point
+├── .github/workflows/agendado.yml  # cron diário (GitHub): gera + commita as imagens
+├── enviar.js                    # entry point e orquestração das quatro categorias
 ├── scraper.js                   # fetch + parse (classificação, artilharia, jogos) → JSON
 ├── formatter.js                 # JSON → modelo de relatório (texto + grids)
 ├── image-renderer.js            # relatório → PNG com grid (node-canvas)
 ├── src/
 │   ├── parser.js                # cheerio: parseClassification, parseScorers, parseGames
+│   ├── categories.js            # URLs e metadados de Sub-7 a Sub-10
 │   ├── normalize.js             # normalização de nomes (acentos, case)
 │   ├── http.js                  # fetch com retry/backoff/timeout
-│   ├── cache.js                 # data/last-run.json
+│   ├── cache.js                 # caches independentes por categoria
 │   └── logger.js
 ├── samples/                     # HTML capturado pra fixtures de teste (classificação, artilharia, jogos)
 ├── tests/
@@ -136,8 +136,8 @@ magnus_bot/
 │   ├── table.test.js            # testes do modelo de tabela/grid
 │   ├── formatter.test.js        # testes do shortClub
 │   └── image-renderer.test.js   # testes do renderer PNG (renderToImage + renderReport)
-├── generated-images/            # classificacao.png (nome fixo, sobrescrito e commitado a cada execução)
-├── data/last-run.json           # cache do último scrape (gitignored)
+├── generated-images/            # classificacao-sub7.png até classificacao-sub10.png
+├── data/last-run-<categoria>.json # caches independentes (gitignored)
 ├── debug/                       # HTMLs salvos quando parser falha (gitignored)
 ├── .env.example
 └── package.json
@@ -149,7 +149,7 @@ magnus_bot/
 |---|---|
 | Seletor quebrado / parser falha | Confira `debug/` para o HTML salvo; compare com `samples/` para ver o que mudou |
 | Time não encontrado na classificação | Verifique `TARGET_TEAM` no `.env`. O match é accent/case-insensitive e aceita parciais |
-| Scrape falha sempre | Confirme que `https://eventos.admfutsal.com.br/evento/908` abre no navegador |
+| Scrape falha sempre | Confira as URLs versionadas em `src/categories.js` e teste-as no navegador |
 
 ## Avisos
 
@@ -157,11 +157,12 @@ magnus_bot/
 
 ## Como funciona
 
-1. `fetch` direto na URL do evento (HTML server-side, não precisa de Playwright).
-2. `cheerio` parseia a tabela `.classification_table` (primeira ocorrência) → JSON tipado.
-3. Mesma coisa para `/artilharia` e `/jogos` — desta última sai o **próximo jogo** (primeiro jogo ainda não disputado do time, a partir da data atual).
-4. `formatter.js` monta um **modelo de relatório** (`buildReportParts`) compartilhado entre texto e imagem: seções de texto + grids de classificação (`buildTableModel`).
-5. `image-renderer.js` (`renderReport`) desenha o PNG com `node-canvas` (fundo escuro, 720px), renderizando a classificação como **grid de verdade** — cabeçalho, zebra, linha do time destacada e coluna SG. O `format()` reaproveita o mesmo modelo para a versão em texto (preview no console).
-6. A imagem é salva em `generated-images/classificacao.png` (nome fixo, sobrescrevendo a versão anterior).
+1. Percorre a configuração de Sub-7 a Sub-10 sequencialmente.
+2. Para cada categoria, faz `fetch` direto na URL do evento (HTML server-side, não precisa de Playwright).
+3. `cheerio` parseia a tabela `.classification_table` (primeira ocorrência) → JSON tipado.
+4. O mesmo ocorre para `/artilharia` e `/jogos`.
+5. `formatter.js` monta um modelo compartilhado entre texto e imagem.
+6. `image-renderer.js` desenha o PNG com `node-canvas` e salva pelo slug da categoria.
+7. Cada imagem é enviada individualmente ao Telegram; falhas são resumidas ao final.
 
-O scrape é cacheado em `data/last-run.json` a cada sucesso, permitindo `--from-cache` e fallback automático (com `ALLOW_STALE_CACHE=true`).
+Cada scrape é cacheado em `data/last-run-sub7.json` até `last-run-sub10.json`, permitindo `--from-cache` e fallback automático independente por categoria (com `ALLOW_STALE_CACHE=true`).

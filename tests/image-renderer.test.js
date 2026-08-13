@@ -130,26 +130,38 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'magnus-test-'));
 test('saveImage: creates directory if it does not exist', async () => {
   const newDir = path.join(tmpDir, 'subdir-' + Date.now());
   const fakePng = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
-  await saveImage(fakePng, newDir);
+  await saveImage(fakePng, newDir, 'sub7');
   assert.ok(fs.existsSync(newDir), 'diretório deve ser criado');
 });
 
-test('saveImage: salva sempre como classificacao.png', async () => {
+test('saveImage: usa nome estável por categoria', async () => {
   const fakePng = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
-  const saved = await saveImage(fakePng, tmpDir);
-  assert.equal(path.basename(saved), 'classificacao.png');
+  const saved = await saveImage(fakePng, tmpDir, 'sub8');
+  assert.equal(path.basename(saved), 'classificacao-sub8.png');
 });
 
-test('saveImage: sobrescreve o arquivo a cada execução (nome estável)', async () => {
-  const first = await saveImage(Buffer.from([0x89, 0x50, 0x4e, 0x47]), tmpDir);
-  const second = await saveImage(Buffer.from([0x89, 0x50, 0x4e, 0x47]), tmpDir);
+test('saveImage: sobrescreve somente a mesma categoria', async () => {
+  const first = await saveImage(Buffer.from([0x89, 0x50, 0x4e, 0x47]), tmpDir, 'sub9');
+  const second = await saveImage(Buffer.from([0x89, 0x50, 0x4e, 0x47]), tmpDir, 'sub9');
   assert.equal(first, second, 'o caminho deve ser o mesmo entre execuções');
-  assert.equal(fs.readdirSync(tmpDir).filter((f) => f.endsWith('.png')).length, 1, 'deve existir apenas um PNG');
+  assert.equal(fs.readdirSync(tmpDir).filter((f) => f === 'classificacao-sub9.png').length, 1);
+});
+
+test('saveImage: categorias diferentes não se sobrescrevem', async () => {
+  const sub7 = await saveImage(Buffer.from([0x89, 0x50, 0x4e, 0x47]), tmpDir, 'sub7');
+  const sub10 = await saveImage(Buffer.from([0x89, 0x50, 0x4e, 0x47]), tmpDir, 'sub10');
+  assert.notEqual(sub7, sub10);
+  assert.ok(fs.existsSync(sub7));
+  assert.ok(fs.existsSync(sub10));
+});
+
+test('saveImage: rejeita categoria desconhecida', async () => {
+  await assert.rejects(() => saveImage(Buffer.alloc(0), tmpDir, '../invalida'), /categoria inválida/);
 });
 
 test('saveImage: returns absolute path of saved file', async () => {
   const fakePng = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
-  const saved = await saveImage(fakePng, tmpDir);
+  const saved = await saveImage(fakePng, tmpDir, 'sub10');
   assert.ok(path.isAbsolute(saved), 'caminho deve ser absoluto');
   assert.ok(fs.existsSync(saved), 'arquivo deve existir no caminho retornado');
 });

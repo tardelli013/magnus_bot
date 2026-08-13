@@ -140,9 +140,12 @@ function selectLastGame(games, targetTeam, { season, referenceDate = new Date(),
   };
 }
 
-async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
+async function scrape({ eventUrl, targetTeam, category, division, season, includeScorers = true } = {}) {
   if (!eventUrl) throw new Error('scraper: eventUrl obrigatório');
   if (!targetTeam) throw new Error('scraper: targetTeam obrigatório');
+  if (!category) throw new Error('scraper: category obrigatória');
+  if (!division) throw new Error('scraper: division obrigatória');
+  if (!season) throw new Error('scraper: season obrigatória');
 
   const scrapedAt = new Date().toISOString();
   const warnings = [];
@@ -150,20 +153,21 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
   // --- Classificação ---
   logger.info(`scraping classificação: ${eventUrl}`);
   let fullClassification;
+  let classificationHtml;
   try {
-    const html = await fetchWithRetry(eventUrl);
-    fullClassification = parseClassification(html);
+    classificationHtml = await fetchWithRetry(eventUrl);
+    fullClassification = parseClassification(classificationHtml);
     logger.info(`classificação OK: ${fullClassification.length} times`);
   } catch (err) {
     logger.error('falha no scrape da classificação:', err.message);
-    if (err.html) saveDebugHtml('classification-parse-error', err.html);
+    if (classificationHtml) saveDebugHtml('classification-parse-error', classificationHtml);
     throw err;
   }
 
   const window = selectTeamWindow(fullClassification, targetTeam, TEAMS_ABOVE, TEAMS_BELOW);
   warnings.push(...window.warnings);
   if (!window.found) {
-    logger.warn('time alvo NÃO encontrado na classificação');
+    throw new Error(`${category}: time alvo não encontrado na classificação`);
   } else {
     logger.info(`time alvo na pos ${fullClassification.findIndex((r) => matchesTeam(r.club, targetTeam).match) + 1}`);
   }
@@ -193,7 +197,6 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
   }
 
   // --- Próximo jogo ---
-  const season = '2026';
   let nextGame = null;
   let lastGame = null;
   const gamesUrl = eventUrl.replace(/\/?$/, '/jogos');
@@ -226,8 +229,8 @@ async function scrape({ eventUrl, targetTeam, includeScorers = true } = {}) {
     scrapedAt,
     source: {
       event: eventUrl,
-      category: 'Sub-7',
-      division: 'A1',
+      category,
+      division,
       season,
     },
     classification: window.slice,

@@ -27,6 +27,11 @@ function formatDate(iso) {
   return `${dd}/${mm}/${yy} ${hh}:${mi}`;
 }
 
+function formatTelegramCaption(payload) {
+  const { category, division } = payload.source;
+  return `${category} Divisão ${division}, atualizado em ${formatDate(payload.scrapedAt)}`;
+}
+
 const CLASSIFICATION_COLUMNS = [
   { label: 'Pos', align: 'left', value: (r) => `${r.position}º` },
   { label: 'Clube', align: 'left', value: (r, ctx) => ctx.label || shortClub(r.club) },
@@ -193,4 +198,4 @@ function format(payload, opts = {}) {
     .join('\n\n');
 }
 
-module.exports = { format, buildReportParts, buildTableModel, renderTableText, formatNextGame, formatLastGame, shortClub, truncate, pad };
+module.exports = { format, formatTelegramCaption, buildReportParts, buildTableModel, renderTableText, formatNextGame, formatLastGame, shortClub, truncate, pad };
