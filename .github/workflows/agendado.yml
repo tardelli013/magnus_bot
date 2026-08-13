@@ -1,9 +1,9 @@
 name: Gera imagens diárias
 
-# Roda todo dia às 20:00 BRT (23:00 UTC) e também por disparo manual.
+# Roda todo dia às 18:00 BRT (21:00 UTC) e também por disparo manual.
 on:
   schedule:
-    - cron: '0 23 * * *'
+    - cron: '0 21 * * *'
   workflow_dispatch:
 
 # Precisa escrever no repo para commitar as imagens.
