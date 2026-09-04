@@ -9,6 +9,7 @@ const { scrape } = require('./scraper');
 const { format, formatTelegramCaption } = require('./formatter');
 const { renderReport, saveImage } = require('./image-renderer');
 const telegram = require('./src/telegram');
+const checksum = require('./src/checksum');
 
 function parseFlags(argv = process.argv.slice(2)) {
   return {
@@ -87,6 +88,19 @@ async function processCategory(category, context) {
   let obtained;
   try {
     obtained = await obtainPayload(category, targetTeam, flags);
+    const currentChecksum = checksum.calculate(obtained.payload);
+    const previousChecksum = checksum.load(category.slug, outputDir);
+
+    if (previousChecksum === currentChecksum) {
+      logger.info(`${category.label}: dados sem alteração; pulando geração e envio`);
+      return {
+        category,
+        status: 'unchanged',
+        checksum: currentChecksum,
+        cacheAgeHours: obtained.cacheAgeHours,
+      };
+    }
+
     const message = format(obtained.payload, { targetTeam, displayName, stale: obtained.stale });
     const buffer = await renderReport(obtained.payload, { targetTeam, displayName, stale: obtained.stale });
     const imagePath = await saveImage(buffer, outputDir, category.slug);
@@ -107,10 +121,14 @@ async function processCategory(category, context) {
       }
     }
 
+    checksum.save(category.slug, currentChecksum, outputDir);
+    logger.info(`${category.label}: checksum atualizado`);
+
     return {
       category,
       status: obtained.stale ? 'stale' : 'success',
       imagePath,
+      checksum: currentChecksum,
       cacheAgeHours: obtained.cacheAgeHours,
     };
   } catch (err) {
@@ -124,6 +142,7 @@ function printSummary(results) {
     let detail;
     if (result.status === 'success') detail = 'OK';
     else if (result.status === 'stale') detail = `OK (cache de ${result.cacheAgeHours.toFixed(1)}h)`;
+    else if (result.status === 'unchanged') detail = 'sem alteração (imagem/envio pulados)';
     else if (result.status === 'send_failed') detail = `ERRO NO ENVIO: ${result.error.message}`;
     else detail = `ERRO: ${result.error.message}`;
     console.log(`${result.category.label.padEnd(6)} ${detail}`);
