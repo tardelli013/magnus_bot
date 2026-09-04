@@ -94,6 +94,18 @@ test('selectNextGame: jogo no dia de hoje conta como próximo', () => {
   assert.equal(sel.game.date, '22/06');
 });
 
+test('selectNextGame: estabiliza jogos empatados na mesma data por horário e clubes', () => {
+  const late = { ...fakeGame('22/06', SOROCABANA, 'TIME B'), time: '11:00' };
+  const early = { ...fakeGame('22/06', SOROCABANA, 'TIME A'), time: '09:00' };
+  const sel = selectNextGame([late, early], SOROCABANA, {
+    season: '2026',
+    referenceDate: new Date(2026, 5, 22),
+  });
+
+  assert.equal(sel.game.time, '09:00');
+  assert.equal(sel.game.opponent, 'TIME A');
+});
+
 test('selectNextGame: identifica mando quando o time é mandante', () => {
   const games = [fakeGame('25/06', SOROCABANA, 'TIME A')];
   const sel = selectNextGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
@@ -202,6 +214,18 @@ test('selectLastGame: ignora jogos futuros e pega o disputado mais recente', () 
   const sel = selectLastGame(games, SOROCABANA, { season: '2026', referenceDate: new Date(2026, 5, 22) });
   assert.equal(sel.found, true);
   assert.equal(sel.game.date, '18/06');
+});
+
+test('selectLastGame: estabiliza jogos empatados na mesma data pelo horário mais tarde', () => {
+  const early = { ...fakePlayedGame('18/06', SOROCABANA, 'TIME A', 2, 1), time: '09:00' };
+  const late = { ...fakePlayedGame('18/06', SOROCABANA, 'TIME B', 3, 1), time: '11:00' };
+  const sel = selectLastGame([early, late], SOROCABANA, {
+    season: '2026',
+    referenceDate: new Date(2026, 5, 22),
+  });
+
+  assert.equal(sel.game.opponent, 'TIME B');
+  assert.equal(sel.game.targetScore, 3);
 });
 
 test('selectLastGame: mapeia placar e mando quando o time é visitante', () => {

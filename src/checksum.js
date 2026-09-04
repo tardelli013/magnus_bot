@@ -29,9 +29,28 @@ function stableScorers(scorers) {
     });
 }
 
+function stableClassification(classification) {
+  return classification
+    .map((row) => stableValue(row))
+    .sort((a, b) => {
+      const position = Number(a.position || 0) - Number(b.position || 0);
+      if (position !== 0) return position;
+      const points = Number(b.points || 0) - Number(a.points || 0);
+      if (points !== 0) return points;
+      const wins = Number(b.wins || 0) - Number(a.wins || 0);
+      if (wins !== 0) return wins;
+      const goalDiff = Number(b.goalDiff || 0) - Number(a.goalDiff || 0);
+      if (goalDiff !== 0) return goalDiff;
+      const goalsFor = Number(b.goalsFor || 0) - Number(a.goalsFor || 0);
+      if (goalsFor !== 0) return goalsFor;
+      return String(a.club || '').localeCompare(String(b.club || ''), 'pt-BR');
+    });
+}
+
 function stableValue(value, key = null) {
   if (Array.isArray(value)) {
     if (key === 'teamScorers' || key === 'topScorers') return stableScorers(value);
+    if (key === 'classification' || key === 'topClassification') return stableClassification(value);
     return value.map((item) => stableValue(item));
   }
   if (!value || typeof value !== 'object') return value;
