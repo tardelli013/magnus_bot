@@ -28,6 +28,48 @@ test('checksum: muda quando o resultado relevante muda', () => {
   assert.notEqual(a, b);
 });
 
+test('checksum: ignora ordem instável de artilheiros empatados', () => {
+  const a = checksum.calculate({
+    topScorers: [
+      { position: 1, name: 'JOAO', club: 'A', goals: 10 },
+      { position: 2, name: 'PEDRO', club: 'B', goals: 10 },
+    ],
+    teamScorers: [
+      { name: 'CARLOS', goals: 3 },
+      { name: 'ANDRE', goals: 3 },
+    ],
+  });
+  const b = checksum.calculate({
+    topScorers: [
+      { position: 1, name: 'PEDRO', club: 'B', goals: 10 },
+      { position: 2, name: 'JOAO', club: 'A', goals: 10 },
+    ],
+    teamScorers: [
+      { name: 'ANDRE', goals: 3 },
+      { name: 'CARLOS', goals: 3 },
+    ],
+  });
+
+  assert.equal(a, b);
+});
+
+test('checksum: ignora ordem instável de classificação com mesma posição', () => {
+  const a = checksum.calculate({
+    classification: [
+      { position: 2, club: 'TIME A', points: 10, wins: 3, goalDiff: 5, goalsFor: 9 },
+      { position: 2, club: 'TIME B', points: 10, wins: 3, goalDiff: 5, goalsFor: 9 },
+    ],
+  });
+  const b = checksum.calculate({
+    classification: [
+      { position: 2, club: 'TIME B', points: 10, wins: 3, goalDiff: 5, goalsFor: 9 },
+      { position: 2, club: 'TIME A', points: 10, wins: 3, goalDiff: 5, goalsFor: 9 },
+    ],
+  });
+
+  assert.equal(a, b);
+});
+
 test('checksum: salva checksums por categoria no mesmo arquivo', (t) => {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'magnus-checksum-'));
   t.after(() => fs.rmSync(dataDir, { recursive: true, force: true }));

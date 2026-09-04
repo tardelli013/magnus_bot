@@ -68,6 +68,46 @@ function positionOf(classification, name) {
   return row ? row.position : null;
 }
 
+function compareClassificationRows(a, b) {
+  const position = Number(a.position || 0) - Number(b.position || 0);
+  if (position !== 0) return position;
+  const points = Number(b.points || 0) - Number(a.points || 0);
+  if (points !== 0) return points;
+  const wins = Number(b.wins || 0) - Number(a.wins || 0);
+  if (wins !== 0) return wins;
+  const goalDiff = Number(b.goalDiff || 0) - Number(a.goalDiff || 0);
+  if (goalDiff !== 0) return goalDiff;
+  const goalsFor = Number(b.goalsFor || 0) - Number(a.goalsFor || 0);
+  if (goalsFor !== 0) return goalsFor;
+  return String(a.club || '').localeCompare(String(b.club || ''), 'pt-BR');
+}
+
+function sortClassification(classification) {
+  return [...classification].sort(compareClassificationRows);
+}
+
+function compareScorers(a, b) {
+  const goals = Number(b.goals || 0) - Number(a.goals || 0);
+  if (goals !== 0) return goals;
+  const club = String(a.club || '').localeCompare(String(b.club || ''), 'pt-BR');
+  if (club !== 0) return club;
+  return String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR');
+}
+
+function sortScorers(scorers) {
+  return [...scorers]
+    .sort(compareScorers)
+    .map((scorer, index) => ({ ...scorer, position: index + 1 }));
+}
+
+function compareGameIdentity(a, b) {
+  const time = String(a.game.time || '').localeCompare(String(b.game.time || ''), 'pt-BR');
+  if (time !== 0) return time;
+  const home = String(a.game.home || '').localeCompare(String(b.game.home || ''), 'pt-BR');
+  if (home !== 0) return home;
+  return String(a.game.away || '').localeCompare(String(b.game.away || ''), 'pt-BR');
+}
+
 function selectNextGame(games, targetTeam, { season, referenceDate = new Date(), classification = [] } = {}) {
   const refKey =
     referenceDate.getFullYear() * 10000 +
@@ -78,7 +118,7 @@ function selectNextGame(games, targetTeam, { season, referenceDate = new Date(),
     .filter((g) => matchesTeam(g.home, targetTeam).match || matchesTeam(g.away, targetTeam).match)
     .map((g) => ({ game: g, key: dateKey(g.date, season) }))
     .filter(({ game, key }) => !game.played && key != null && key >= refKey)
-    .sort((a, b) => a.key - b.key);
+    .sort((a, b) => (a.key - b.key) || compareGameIdentity(a, b));
 
   if (!upcoming.length) {
     return { found: false, game: null, warnings: ['nenhum jogo futuro encontrado para o time alvo'] };
@@ -113,7 +153,7 @@ function selectLastGame(games, targetTeam, { season, referenceDate = new Date(),
     .filter((g) => matchesTeam(g.home, targetTeam).match || matchesTeam(g.away, targetTeam).match)
     .map((g) => ({ game: g, key: dateKey(g.date, season) }))
     .filter(({ game, key }) => game.played && key != null && key <= refKey)
-    .sort((a, b) => b.key - a.key); // mais recente primeiro
+    .sort((a, b) => (b.key - a.key) || -compareGameIdentity(a, b)); // mais recente primeiro
 
   if (!past.length) {
     return { found: false, game: null, warnings: ['nenhum jogo anterior encontrado para o time alvo'] };
@@ -156,7 +196,7 @@ async function scrape({ eventUrl, targetTeam, category, division, season, includ
   let classificationHtml;
   try {
     classificationHtml = await fetchWithRetry(eventUrl);
-    fullClassification = parseClassification(classificationHtml);
+    fullClassification = sortClassification(parseClassification(classificationHtml));
     logger.info(`classificação OK: ${fullClassification.length} times`);
   } catch (err) {
     logger.error('falha no scrape da classificação:', err.message);
@@ -182,9 +222,10 @@ async function scrape({ eventUrl, targetTeam, category, division, season, includ
     try {
       const html = await fetchWithRetry(scorersUrl);
       const { scorers, warnings: pw } = parseScorers(html);
+      const sortedScorers = sortScorers(scorers);
       warnings.push(...pw);
-      topScorers = scorers.slice(0, 5);
-      teamScorers = scorers
+      topScorers = sortedScorers.slice(0, 5);
+      teamScorers = sortedScorers
         .filter((s) => matchesTeam(s.club, targetTeam).match)
         .map((s) => ({ name: s.name, goals: s.goals }));
       logger.info(`artilharia OK: ${scorers.length} jogadores, ${teamScorers.length} do time alvo`);
@@ -244,4 +285,13 @@ async function scrape({ eventUrl, targetTeam, category, division, season, includ
   };
 }
 
-module.exports = { scrape, selectTeamWindow, selectNextGame, selectLastGame, TEAMS_ABOVE, TEAMS_BELOW };
+module.exports = {
+  scrape,
+  selectTeamWindow,
+  selectNextGame,
+  selectLastGame,
+  sortClassification,
+  sortScorers,
+  TEAMS_ABOVE,
+  TEAMS_BELOW,
+};
