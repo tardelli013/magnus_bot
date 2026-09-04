@@ -68,6 +68,20 @@ function positionOf(classification, name) {
   return row ? row.position : null;
 }
 
+function compareScorers(a, b) {
+  const goals = Number(b.goals || 0) - Number(a.goals || 0);
+  if (goals !== 0) return goals;
+  const club = String(a.club || '').localeCompare(String(b.club || ''), 'pt-BR');
+  if (club !== 0) return club;
+  return String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR');
+}
+
+function sortScorers(scorers) {
+  return [...scorers]
+    .sort(compareScorers)
+    .map((scorer, index) => ({ ...scorer, position: index + 1 }));
+}
+
 function selectNextGame(games, targetTeam, { season, referenceDate = new Date(), classification = [] } = {}) {
   const refKey =
     referenceDate.getFullYear() * 10000 +
@@ -182,9 +196,10 @@ async function scrape({ eventUrl, targetTeam, category, division, season, includ
     try {
       const html = await fetchWithRetry(scorersUrl);
       const { scorers, warnings: pw } = parseScorers(html);
+      const sortedScorers = sortScorers(scorers);
       warnings.push(...pw);
-      topScorers = scorers.slice(0, 5);
-      teamScorers = scorers
+      topScorers = sortedScorers.slice(0, 5);
+      teamScorers = sortedScorers
         .filter((s) => matchesTeam(s.club, targetTeam).match)
         .map((s) => ({ name: s.name, goals: s.goals }));
       logger.info(`artilharia OK: ${scorers.length} jogadores, ${teamScorers.length} do time alvo`);
@@ -244,4 +259,4 @@ async function scrape({ eventUrl, targetTeam, category, division, season, includ
   };
 }
 
-module.exports = { scrape, selectTeamWindow, selectNextGame, selectLastGame, TEAMS_ABOVE, TEAMS_BELOW };
+module.exports = { scrape, selectTeamWindow, selectNextGame, selectLastGame, sortScorers, TEAMS_ABOVE, TEAMS_BELOW };

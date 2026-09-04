@@ -9,15 +9,38 @@ function checksumFile(dataDir) {
   return path.join(dataDir, CHECKSUM_FILE);
 }
 
-function stableValue(value) {
-  if (Array.isArray(value)) return value.map(stableValue);
+function stableScorer(scorer) {
+  return stableValue({
+    name: scorer.name,
+    club: scorer.club,
+    goals: scorer.goals,
+  });
+}
+
+function stableScorers(scorers) {
+  return scorers
+    .map(stableScorer)
+    .sort((a, b) => {
+      const goals = Number(b.goals || 0) - Number(a.goals || 0);
+      if (goals !== 0) return goals;
+      const club = String(a.club || '').localeCompare(String(b.club || ''), 'pt-BR');
+      if (club !== 0) return club;
+      return String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR');
+    });
+}
+
+function stableValue(value, key = null) {
+  if (Array.isArray(value)) {
+    if (key === 'teamScorers' || key === 'topScorers') return stableScorers(value);
+    return value.map((item) => stableValue(item));
+  }
   if (!value || typeof value !== 'object') return value;
 
   return Object.keys(value)
     .filter((key) => key !== 'scrapedAt')
     .sort()
     .reduce((acc, key) => {
-      acc[key] = stableValue(value[key]);
+      acc[key] = stableValue(value[key], key);
       return acc;
     }, {});
 }
