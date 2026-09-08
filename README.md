@@ -1,5 +1,7 @@
 # magnus-bot
 
+[![Gera imagens diárias](https://github.com/tardelli013/magnus_bot/actions/workflows/agendado.yml/badge.svg?branch=main)](https://github.com/tardelli013/magnus_bot/actions/workflows/agendado.yml)
+
 Gera **quatro imagens PNG** com a classificação, os jogos e a artilharia do **Campeonato Paulista de Futsal Sub-7, Sub-8, Sub-9 e Sub-10, Divisão A1, Temporada 2026** (ADM Futsal), com foco na **ASSOCIAÇÃO SOROCABANA DE FUTSAL**.
 
 URL do channel -> https://t.me/bot_magnus
